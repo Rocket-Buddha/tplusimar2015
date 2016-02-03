@@ -12,6 +12,9 @@ import com.github.rb.tplusimar2015.empleados.gui.impl.EmpleadoModificarSoportePa
 import com.github.rb.tplusimar2015.core.gui.impl.PrincipalVentana;
 import com.github.rb.tplusimar2015.core.InterfaceModuleController;
 import com.github.rb.tplusimar2015.core.impl.MainController;
+import com.github.rb.tplusimar2015.exceptions.DAOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class EmpleadoController implements  InterfaceModuleController{
 
@@ -97,7 +100,9 @@ public class EmpleadoController implements  InterfaceModuleController{
 
 		} catch (ModelException | RuntimeException e) {
 			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
+		} catch (DAOException ex) {
+                Logger.getLogger(EmpleadoController.class.getName()).log(Level.SEVERE, null, ex);
+            }
 		
 	}
 

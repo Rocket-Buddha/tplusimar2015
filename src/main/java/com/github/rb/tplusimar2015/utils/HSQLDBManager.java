@@ -3,12 +3,16 @@ package com.github.rb.tplusimar2015.utils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import org.hsqldb.jdbcDriver;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+//import org.hsqldb.jdbcDriver;
 
 public class HSQLDBManager implements DBManagerInterface {
 
-	private static final String WORKSPACE = "F:/Documents/NetBeansProjects/";
-	private static final String DATABASE = "TP-Lusi-MAR-2015/db_taller/";
+    
+   
+    
+        private static final String URL = "C:/Program Files/hsqldb-2.3.3/data bases/";
 	private static HSQLDBManager INSTANCE;
 
 	public static HSQLDBManager getInstance() {
@@ -40,14 +44,16 @@ public class HSQLDBManager implements DBManagerInterface {
 		Connection conexion = null;
 		try {
 			
-                        //Class.forName("org.hsqldb.jdbcDriver");
+                        Class.forName("org.hsqldb.jdbcDriver");
 			conexion = DriverManager.getConnection("jdbc:hsqldb:file:"
-					+ WORKSPACE + DATABASE, "SA", "");
+					+ URL, "SA", "");
 			conexion.setAutoCommit(false);
 
 		} catch (SQLException e) {
 			throw new SQLException();
-		}
+		} catch (ClassNotFoundException ex) {
+                Logger.getLogger(HSQLDBManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
 		return conexion;
 	}
 

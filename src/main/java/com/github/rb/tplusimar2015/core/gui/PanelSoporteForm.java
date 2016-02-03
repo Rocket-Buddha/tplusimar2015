@@ -46,6 +46,7 @@ public abstract class PanelSoporteForm extends JPanel {
                     }
                 });
                 break;
+           
             case MODIFICACION:
                     panelSur.getJbAceptar().addActionListener((ActionEvent e) -> {
                     try {

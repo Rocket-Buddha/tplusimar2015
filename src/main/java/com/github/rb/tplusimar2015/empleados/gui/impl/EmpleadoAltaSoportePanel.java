@@ -23,8 +23,8 @@ public final class EmpleadoAltaSoportePanel extends PanelSoporteForm {
 		
 		 PanelFormularioForm panelCentral = super.getPanelCentral();
         
-        Integer nLegajo = Integer.valueOf(((EmpleadoPanelFormularioForm) panelCentral)
-                .getJtfNLegajo().getText());
+        //Integer nLegajo = Integer.valueOf(((EmpleadoPanelFormularioForm) panelCentral)
+                //.getJtfNLegajo().getText());
         Integer dni = Integer.valueOf(((EmpleadoPanelFormularioForm) panelCentral)
                 .getJtfDni().getText());
         String nombre = ((EmpleadoPanelFormularioForm) panelCentral)
@@ -41,7 +41,7 @@ public final class EmpleadoAltaSoportePanel extends PanelSoporteForm {
         Senority senority = (Senority) ((EmpleadoPanelFormularioForm)panelCentral).getJcbSenority().getSelectedItem();
 
         //Integer legajo, String direccion, Senority senority, Rol rol, Integer dni, String nombre, String apellido, String telefono
-        Empleado empleado = new Empleado(nLegajo, direccion, senority,rol, dni, nombre, apellido, telefono);
+        Empleado empleado = new Empleado(null, direccion, senority,rol, dni, nombre, apellido, telefono);
 
         return empleado;
 	}

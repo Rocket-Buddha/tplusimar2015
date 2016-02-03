@@ -34,19 +34,11 @@ public class EmpleadoModelo extends AbstractTableModel implements
         }
     }
 
-    public void altaEmpleado(Empleado empleado) throws ModelException {
+    public void altaEmpleado(Empleado empleado) throws ModelException, DAOException {
 
-        try {
-  
-            EmpleadoDAOImpl empleadoDAOImpl = EmpleadoDAOImpl.getInstance();
-            
-             this.listaEmpleados.add(empleadoDAOImpl
-                     .altaEmpleado(empleado));
-
-            this.fireTableDataChanged();
-        } catch (DAOException e) {
-            throw new ModelException(e);
-        }
+        EmpleadoDAOImpl empleadoDAOImpl = EmpleadoDAOImpl.getInstance();
+        empleadoDAOImpl.altaEmpleado(empleado);
+        this.fireTableDataChanged();
     }
 
     public void bajaEmpleado(Empleado empleado) throws ModelException {
@@ -72,6 +64,7 @@ public class EmpleadoModelo extends AbstractTableModel implements
             empleadoDAOImpl.modificarEmpleado(empleado);
 
             this.fireTableDataChanged();
+            
         } catch (DAOException e) {
             throw new ModelException(e);
         }
@@ -86,7 +79,7 @@ public class EmpleadoModelo extends AbstractTableModel implements
 
             empleadoI = this.listaEmpleados.get(i);
 
-            if (empleadoI.getDni().equals(empleado.getDni())) {
+            if (empleadoI.getLegajo().equals(empleado.getLegajo())) {
                 this.listaEmpleados.remove(i);
                 i = -1;
             }
@@ -127,19 +120,31 @@ public class EmpleadoModelo extends AbstractTableModel implements
 
         String stringPosicion = null;
         Empleado empleado = this.listaEmpleados.get(arg0);
-
+//{"LEGAJO", "DNI", "NOMBRE", "APELLIDO", "TELEFONO", "DIRECCION", "ROL", "SENORITY"};
         switch (arg1) {
             case 0:
-                stringPosicion = String.valueOf(empleado.getDni());
+                stringPosicion = String.valueOf(empleado.getLegajo());
                 break;
             case 1:
-                stringPosicion = empleado.getNombre();
+                stringPosicion = String.valueOf(empleado.getDni());
                 break;
             case 2:
-                stringPosicion = empleado.getApellido();
+                stringPosicion = empleado.getNombre();
                 break;
             case 3:
+                stringPosicion = empleado.getApellido();
+                break;
+            case 4:
                 stringPosicion = empleado.getTelefono();
+                break;
+            case 5:
+                stringPosicion = empleado.getDireccion();
+                break;
+            case 6:
+                stringPosicion = empleado.getRol().toString();
+                break;
+            case 7:
+                stringPosicion = empleado.getSenority().toString();
                 break;
         }
         return stringPosicion;

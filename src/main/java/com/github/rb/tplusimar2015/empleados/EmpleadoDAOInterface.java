@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public interface EmpleadoDAOInterface {
 	
-	public Empleado altaEmpleado(Empleado cliente) throws DAOException;
+	public void altaEmpleado(Empleado cliente) throws DAOException;
 
 	public void bajaEmpleado(Empleado cliente) throws DAOException;
 

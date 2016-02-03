@@ -27,8 +27,13 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
         return INSTANCE;
     }
 
+    /**
+     *
+     * @param empleado
+     * @throws DAOException
+     */
     @Override
-    public Empleado altaEmpleado(Empleado empleado) throws DAOException {
+    public void altaEmpleado(Empleado empleado) throws DAOException {
 
         DBManagerInterface dbManager = HSQLDBManager.getInstance();
         Connection conexion = null;
@@ -38,10 +43,8 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
             conexion = dbManager.getConnection();
 
             PreparedStatement preparedstatement = conexion
-                    .prepareStatement("INSERT INTO TB_EMPLEADOS\n"
-                            + "( DNI, NOMBRE, APELLIDO, TELEFONO, DIRECCION, ROL, SENORITY)\n"
-                            + "VALUES (?, ?, ?, ?, ?, ?, ?);\n"
-                            + "CALL IDENTITY();");
+                    .prepareStatement("INSERT INTO TB_EMPLEADOS ( DNI, NOMBRE, APELLIDO, TELEFONO, DIRECCION, ROL, SENORITY) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                      
 
             preparedstatement.setInt(1, empleado.getDni());
             preparedstatement.setString(2, empleado.getNombre());
@@ -51,12 +54,8 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
             preparedstatement.setString(6, empleado.getRol().toString());
             preparedstatement.setString(7, empleado.getSenority().toString());
 
-            ResultSet resultSet = preparedstatement.executeQuery();
-
-            while (resultSet.next()) {
-                empleado.setLegajo(resultSet.getInt("@p0"));
-            }
-
+            preparedstatement.executeUpdate();
+            
             conexion.commit();
             dbManager.closeConnection(conexion);
 
@@ -79,7 +78,7 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
             }
         }
 
-        return empleado;
+        
     }
 
     @Override
@@ -92,7 +91,7 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
 
             conexion = dbManager.getConnection();
             PreparedStatement preparedstatement = conexion
-                    .prepareStatement("DELETE FROM TB_EMLEADOS\n"
+                    .prepareStatement("DELETE FROM TB_EMPLEADOS\n"
                             + "WHERE N_LEGAJO = ?");
 
             preparedstatement.setInt(1, empleado.getLegajo());
@@ -141,7 +140,7 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
             preparedstatement.setString(5, empleado.getDireccion());
             preparedstatement.setString(6, empleado.getRol().toString());
             preparedstatement.setString(7, empleado.getSenority().toString());
-            preparedstatement.setInt(8, empleado.getDni());
+            preparedstatement.setInt(8, empleado.getLegajo());
 
             preparedstatement.executeUpdate();
 
