@@ -3,7 +3,7 @@ package com.github.rb.tplusimar2015.utils;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
-public class Grafico {
+public final class Grafico {
 	
 	public static int obtenerAnchoPantalla(){
 				GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();

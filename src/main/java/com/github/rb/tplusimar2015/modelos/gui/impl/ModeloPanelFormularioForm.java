@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.github.rb.tplusimar2015.modelos.gui.impl;
 
 import com.github.rb.tplusimar2015.core.gui.PanelFormularioForm;
@@ -13,11 +8,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-/**
- *
- * @author Andres
- */
-public final  class ModeloPanelFormularioForm extends PanelFormularioForm {
+public final class ModeloPanelFormularioForm extends PanelFormularioForm {
 
     private final JTextField jtfNumero;
     private final JTextField jtfNombre;
@@ -26,7 +17,6 @@ public final  class ModeloPanelFormularioForm extends PanelFormularioForm {
 
     public ModeloPanelFormularioForm() {
 
-        super();
         this.jtfNumero = new JTextField(10);
         jtfNumero.setEnabled(false);
         this.jtfNombre = new JTextField(10);
@@ -39,7 +29,6 @@ public final  class ModeloPanelFormularioForm extends PanelFormularioForm {
 
     public ModeloPanelFormularioForm(Modelo modelo) {
 
-        super();
         this.jtfNumero = new JTextField(10);
         jtfNumero.setEnabled(false);
         this.jtfNombre = new JTextField(10);
@@ -52,24 +41,35 @@ public final  class ModeloPanelFormularioForm extends PanelFormularioForm {
 
     private void cargarDatosIniciales(Modelo modelo) {
 
-        this.jtfNumero.setText(modelo.getN_modelo().toString());
+        this.jtfNumero
+                .setText(modelo.getN_modelo()
+                        .toString());
         this.jtfNombre.setText(modelo.getNombre());
         this.jtfDescripcion.setText(modelo.getDescripcion());
         this.jcbMarca.setSelectedItem(modelo.getMarca());
     }
 
     private void armarPanel() {
-        
-        super.getContenedor().setLayout(new GridLayout(4, 2, 5, 5));
 
-        super.getContenedor().add(new JLabel("Numero:"));
-        super.getContenedor().add(jtfNumero);
-        super.getContenedor().add(new JLabel("Nombre:"));
-        super.getContenedor().add(jtfNombre);
-        super.getContenedor().add(new JLabel("Descripcion:"));
-        super.getContenedor().add(jtfDescripcion);
-        super.getContenedor().add(new JLabel("Marca:"));
-        super.getContenedor().add(jcbMarca);
+        super.getContenedor()
+                .setLayout(new GridLayout(4, 2, 5, 5));
+
+        super.getContenedor()
+                .add(new JLabel("Numero:"));
+        super.getContenedor()
+                .add(jtfNumero);
+        super.getContenedor()
+                .add(new JLabel("Nombre:"));
+        super.getContenedor()
+                .add(jtfNombre);
+        super.getContenedor()
+                .add(new JLabel("Descripcion:"));
+        super.getContenedor()
+                .add(jtfDescripcion);
+        super.getContenedor()
+                .add(new JLabel("Marca:"));
+        super.getContenedor()
+                .add(jcbMarca);
 
         this.add(super.getContenedor());
     }
@@ -89,10 +89,4 @@ public final  class ModeloPanelFormularioForm extends PanelFormularioForm {
     public JComboBox<Marca> getJcbMarca() {
         return jcbMarca;
     }
-
-    
-    
-  
-
-    
 }

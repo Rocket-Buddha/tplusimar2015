@@ -12,215 +12,218 @@ import com.github.rb.tplusimar2015.utils.HSQLDBManager;
 import com.github.rb.tplusimar2015.core.pojo.Cliente;
 import com.github.rb.tplusimar2015.exceptions.DAOException;
 
-public class ClienteDAOImpl implements ClienteDAOInterface {
+public final class ClienteDAOImpl implements ClienteDAOInterface {
 
-	private static ClienteDAOImpl INSTANCE;
+    private static ClienteDAOImpl INSTANCE;
 
-	public static ClienteDAOImpl getInstance() {
+    public static ClienteDAOImpl getInstance() {
 
-		if (INSTANCE == null)
-			createInstance();
-		return INSTANCE;
+        synchronized (ClienteDAOImpl.class) {
 
-	}
+            INSTANCE = (INSTANCE == null) ? new ClienteDAOImpl() : INSTANCE;
+        }
+        return INSTANCE;
 
-	private static void createInstance() {
+    }
 
-		
-		if (INSTANCE == null) {
-			synchronized (ClienteDAOImpl.class) {
-			
-				if (INSTANCE == null) {
-					INSTANCE = new ClienteDAOImpl();
-				}
-			}
-		}
-	}
+    @Override
+    public void altaCliente(Cliente cliente) throws DAOException {
 
-	@Override
-	public void altaCliente(Cliente cliente) throws DAOException {
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
 
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null;
+        try {
 
-		try {
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("INSERT INTO TB_CLIENTES (DNI, NOMBRE, APELLIDO, TELEFONO) VALUES (?,?,?,?)");
 
-			conexion = dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("INSERT INTO tb_clientes (dni, nombre, apellido, telefono) VALUES (?,?,?,?)");
-			preparedstatement.setInt(1, cliente.getDni());
-			preparedstatement.setString(2, cliente.getNombre());
-			preparedstatement.setString(3, cliente.getApellido());
-			preparedstatement.setString(4, cliente.getTelefono());
+            preparedstatement.setInt(1, cliente.getDni());
+            preparedstatement.setString(2, cliente.getNombre());
+            preparedstatement.setString(3, cliente.getApellido());
+            preparedstatement.setString(4, cliente.getTelefono());
 
-			preparedstatement.executeUpdate();
+            preparedstatement.executeUpdate();
 
-			conexion.commit();
-			dbManager.closeConnection(conexion);
+            conexion.commit();
+            dbManager.closeConnection(conexion);
 
-		} catch (SQLException e) {
-			try {
-				conexion.rollback();
-				throw new DAOException(e);
-			} catch (SQLException e1) {
-				throw new DAOException(e1);
-			}
-		} finally {
-			try {
-				dbManager.closeConnection(conexion);
-			} catch (SQLException e2) {
-				throw new DAOException(e2);
-			}
-		}
-	}
+        } catch (SQLException e) {
+            try {
+                if (conexion != null) {
+                    conexion.rollback();
+                }
+                throw new DAOException(e);
+            } catch (SQLException e1) {
+                throw new DAOException(e1);
+            }
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e2) {
+                throw new DAOException(e2);
+            }
+        }
+    }
 
-	@Override
-	public void bajaCliente(Cliente cliente) throws DAOException {
+    @Override
+    public void bajaCliente(Cliente cliente) throws DAOException {
 
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null;
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
 
-		try {
+        try {
 
-			conexion = dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("DELETE FROM tb_clientes WHERE dni=?");
-			preparedstatement.setInt(1, cliente.getDni());
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("DELETE FROM TB_CLIENTES WHERE DNI = ?");
 
-			preparedstatement.executeUpdate();
+            preparedstatement.setInt(1, cliente.getDni());
 
-			conexion.commit();
-			dbManager.closeConnection(conexion);
+            preparedstatement.executeUpdate();
 
-		} catch (SQLException e) {
-			try {
-				conexion.rollback();
-				throw new DAOException(e);
-			} catch (SQLException e1) {
-				throw new DAOException(e);
-			}
-		} finally {
-			try {
-				dbManager.closeConnection(conexion);
-			} catch (SQLException e3) {
-				throw new DAOException(e3);
-			}
-		}
-	}
+            conexion.commit();
+            dbManager.closeConnection(conexion);
 
-	@Override
-	public void modificarCliente(Cliente cliente) throws DAOException {
+        } catch (SQLException e) {
+            try {
+                if (conexion != null) {
+                    conexion.rollback();
+                }
+                throw new DAOException(e);
+            } catch (SQLException e1) {
+                throw new DAOException(e1);
+            }
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
+    }
 
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null;
+    @Override
+    public void modificarCliente(Cliente cliente) throws DAOException {
 
-		try {
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
 
-			conexion = dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("UPDATE TB_CLIENTES SET nombre=?,apellido=?,telefono=? WHERE dni=?");
-			preparedstatement.setString(1, cliente.getNombre());
-			preparedstatement.setString(2, cliente.getApellido());
-			preparedstatement.setString(3, cliente.getTelefono());
-			preparedstatement.setInt(4, cliente.getDni());
+        try {
 
-			preparedstatement.executeUpdate();
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("UPDATE TB_CLIENTES SET NOMBRE=?, APELLIDO=?, TELEFONO=? WHERE DNI= ? ");
 
-			conexion.commit();
-			dbManager.closeConnection(conexion);
+            preparedstatement.setString(1, cliente.getNombre());
+            preparedstatement.setString(2, cliente.getApellido());
+            preparedstatement.setString(3, cliente.getTelefono());
+            preparedstatement.setInt(4, cliente.getDni());
 
-		} catch (SQLException e) {
-			try {
-				conexion.rollback();
-				throw new DAOException(e);
-			} catch (SQLException e1) {
-				throw new DAOException(e1);
-			}
-		} finally {
-			try {
-				dbManager.closeConnection(conexion);
-			} catch (SQLException e3) {
-				throw new DAOException(e3);
-			}
-		}
+            preparedstatement.executeUpdate();
 
-	}
+            conexion.commit();
+            dbManager.closeConnection(conexion);
 
-	@Override
-	public Collection<Cliente> listarClientes() throws DAOException {
+        } catch (SQLException e) {
+            try {
+                if (conexion != null) {
+                    conexion.rollback();
+                }
+                throw new DAOException(e);
+            } catch (SQLException e1) {
+                throw new DAOException(e1);
+            }
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
 
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null;
-		Collection<Cliente> listaClientesResultado = new ArrayList<Cliente>();
+    }
 
-		try {
+    @Override
+    public Collection<Cliente> listarClientes() throws DAOException {
 
-			conexion = dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("SELECT * FROM TB_CLIENTES");
-			ResultSet resultSet = preparedstatement.executeQuery();
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
+        Collection<Cliente> listaClientesResultado = new ArrayList<>();
 
-			while (resultSet.next()) {
+        try {
 
-				Integer dni = resultSet.getInt("dni");
-				String nombre = resultSet.getString("nombre");
-				String apellido = resultSet.getString("apellido");
-				String telefono = resultSet.getString("telefono");
-				
+            conexion = dbManager.getConnection();
 
-				Cliente cliente = new Cliente(dni, nombre, apellido, telefono);
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("SELECT * FROM TB_CLIENTES");
 
-				listaClientesResultado.add(cliente);
-			}
-		} catch (SQLException e) {
-			throw new DAOException(e);
-		} finally {
-			try {
-				dbManager.closeConnection(conexion);
-			} catch (SQLException e3) {
-				throw new DAOException(e3);
-			}
-		}
+            ResultSet resultSet = preparedstatement.executeQuery();
 
-		return listaClientesResultado;
-	}
+            while (resultSet.next()) {
 
-	@Override
-	public Cliente buscarCliente(Cliente cliente) throws DAOException {
+                Integer dni = resultSet.getInt("DNI");
+                String nombre = resultSet.getString("NOMBRE");
+                String apellido = resultSet.getString("APELLIDO");
+                String telefono = resultSet.getString("TELEFONO");
 
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null;
+                Cliente cliente = new Cliente(dni,
+                        nombre,
+                        apellido,
+                        telefono);
 
-		try {
+                listaClientesResultado.add(cliente);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
 
-			conexion = dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("SELECT * FROM TB_CLIENTES WHERE DNI=?");
-			preparedstatement.setInt(1, cliente.getDni());
-			ResultSet resultSet = preparedstatement.executeQuery();
+        return listaClientesResultado;
+    }
 
-			while (resultSet.next()) {
+    @Override
+    public Cliente buscarCliente(Cliente cliente) throws DAOException {
 
-				//Integer dni = resultSet.getInt("dni");
-				String nombre = resultSet.getString("nombre");
-				String apellido = resultSet.getString("apellido");
-				String telefono = resultSet.getString("telefono");
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
 
-				cliente.setNombre(nombre);
-				cliente.setApellido(apellido);
-				cliente.setTelefono(telefono);
+        try {
 
-			}
-		} catch (SQLException e) {
-			throw new DAOException(e);
-		} finally {
-			try {
-				dbManager.closeConnection(conexion);
-			} catch (SQLException e3) {
-				throw new DAOException(e3);
-			}
-		}
-		return cliente;
-	}
+            conexion = dbManager.getConnection();
+            
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("SELECT * FROM TB_CLIENTES WHERE DNI=?");
+            
+            preparedstatement.setInt(1, cliente.getDni());
+            
+            ResultSet resultSet = preparedstatement.executeQuery();
 
+            while (resultSet.next()) {
+
+                String nombre = resultSet.getString("nombre");
+                String apellido = resultSet.getString("apellido");
+                String telefono = resultSet.getString("telefono");
+
+                cliente.setNombre(nombre);
+                cliente.setApellido(apellido);
+                cliente.setTelefono(telefono);
+
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
+        return cliente;
+    }
 }

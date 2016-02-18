@@ -1,7 +1,6 @@
 package com.github.rb.tplusimar2015.autos;
 
 import java.util.Collection;
-
 import com.github.rb.tplusimar2015.core.pojo.Auto;
 import com.github.rb.tplusimar2015.exceptions.DAOException;
 

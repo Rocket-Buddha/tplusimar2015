@@ -1,7 +1,6 @@
 package com.github.rb.tplusimar2015.clientes.impl;
 
 import java.util.ArrayList;
-
 import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;
 import javax.swing.table.AbstractTableModel;
@@ -9,188 +8,172 @@ import com.github.rb.tplusimar2015.core.pojo.Cliente;
 import com.github.rb.tplusimar2015.exceptions.DAOException;
 import com.github.rb.tplusimar2015.exceptions.ModelException;
 
-public class ClienteModelo extends AbstractTableModel implements
-		ComboBoxModel<Cliente> {
+public final class ClienteModelo extends AbstractTableModel implements
+        ComboBoxModel<Cliente> {
 
-	private static final long serialVersionUID = -3261257139306569602L;
-	private ArrayList<Cliente> listaClientes;
-	private String[] columnas = { "DNI", "NOMBRE", "APELLIDO", "TELEFONO" };
-	private Cliente selectedItem;
-	private static ClienteModelo INSTANCE;
+    private ArrayList<Cliente> listaClientes;
+    private final String[] columnas;
+    private Cliente selectedItem;
+    private static ClienteModelo INSTANCE;
 
-	public static ClienteModelo getInstance() throws ModelException {
+    public static ClienteModelo getInstance() throws ModelException {
 
-		if (INSTANCE == null)
-			createInstance();
-		return INSTANCE;
+        synchronized (ClienteModelo.class) {
 
-	}
+            INSTANCE = (INSTANCE == null) ? new ClienteModelo() : INSTANCE;
+        }
+        return INSTANCE;
+    }
 
-	private static void createInstance() throws ModelException {
-		
-		if (INSTANCE == null) {
-			synchronized (ClienteModelo.class) {
-				
-				if (INSTANCE == null) {
-					INSTANCE = new ClienteModelo();
-				}
-			}
-		}
-	}
+    private ClienteModelo() throws ModelException {
+        this.columnas = new String[]{"DNI", "NOMBRE", "APELLIDO", "TELEFONO"};
+        try {
+            this.listaClientes = (ArrayList<Cliente>) ClienteDAOImpl
+                    .getInstance().listarClientes();
 
-	private ClienteModelo() throws ModelException {
-		try {
-			this.listaClientes = (ArrayList<Cliente>) ClienteDAOImpl
-					.getInstance().listarClientes();
+        } catch (DAOException e) {
+            throw new ModelException(e);
+        }
+    }
 
-		} catch (DAOException e) {
-			throw new ModelException(e);
-		}
-	}
+    public void altaCliente(Cliente cliente) throws ModelException {
 
-	public void altaCliente(Cliente cliente) throws ModelException {
+        try {
+            this.listaClientes.add(cliente);
 
-		try {
-			this.listaClientes.add(cliente);
+            ClienteDAOImpl clienteDAOImpl = ClienteDAOImpl.getInstance();
+            clienteDAOImpl.altaCliente(cliente);
 
-			ClienteDAOImpl clienteDAOImpl = ClienteDAOImpl.getInstance();
-			clienteDAOImpl.altaCliente(cliente);
+            this.fireTableDataChanged();
+        } catch (DAOException e) {
+            throw new ModelException(e);
+        }
+    }
 
-			this.fireTableDataChanged();
-		} catch (DAOException e) {
-			throw new ModelException(e);
-		}
-	}
+    public void bajaCliente(Cliente cliente) throws ModelException {
 
-	public void bajaCliente(Cliente cliente) throws ModelException {
+        try {
+            this.modeloRemover(cliente);
 
-		try {
-			this.modeloRemover(cliente);
+            ClienteDAOImpl clienteDAOImpl = ClienteDAOImpl.getInstance();
+            clienteDAOImpl.bajaCliente(cliente);
 
-			ClienteDAOImpl clienteDAOImpl = ClienteDAOImpl.getInstance();
-			clienteDAOImpl.bajaCliente(cliente);
+            this.fireTableDataChanged();
+        } catch (DAOException e) {
+            throw new ModelException(e);
+        }
+    }
 
-			this.fireTableDataChanged();
-		} catch (DAOException e) {
-			throw new ModelException(e);
-		}
-	}
+    public void modificarCliente(Cliente cliente) throws ModelException {
+        try {
 
-	public void modificarCliente(Cliente cliente) throws ModelException {
-		try {
+            this.modeloModificar(cliente);
 
-			this.modeloModificar(cliente);
+            ClienteDAOImpl clienteDAOImpl = ClienteDAOImpl.getInstance();
+            clienteDAOImpl.modificarCliente(cliente);
 
-			ClienteDAOImpl clienteDAOImpl = ClienteDAOImpl.getInstance();
-			clienteDAOImpl.modificarCliente(cliente);
+            this.fireTableDataChanged();
+        } catch (DAOException e) {
+            throw new ModelException(e);
+        }
+    }
 
-			this.fireTableDataChanged();
-		} catch (DAOException e) {
-			throw new ModelException(e);
-		}
-	}
+    private void modeloRemover(Cliente cliente) throws ModelException {
 
-	// metodos help
+        Cliente clienteI;
 
-	private void modeloRemover(Cliente cliente) throws ModelException {
+        for (int i = 0; i < this.listaClientes.size(); i++) {
 
-		Cliente clienteI = new Cliente();
+            clienteI = this.listaClientes.get(i);
 
-		for (int i = 0; i < this.listaClientes.size(); i++) {
+            if (clienteI.getDni().equals(cliente.getDni())) {
+                this.listaClientes.remove(i);
+                i = -1;
+            }
+        }
+    }
 
-			clienteI = this.listaClientes.get(i);
+    private void modeloModificar(Cliente cliente) throws ModelException {
 
-			if (clienteI.getDni().equals(cliente.getDni())) {
-				this.listaClientes.remove(i);
-				i = -1;
-			}
-		}
-	}
+        Cliente clienteI;
 
-	private void modeloModificar(Cliente cliente) throws ModelException {
+        for (int i = 0; i < this.listaClientes.size(); i++) {
 
-		Cliente clienteI = new Cliente();
+            clienteI = this.listaClientes.get(i);
 
-		for (int i = 0; i < this.listaClientes.size(); i++) {
+            if (clienteI.getDni().equals(cliente.getDni())) {
+                this.listaClientes.set(i, cliente);
+            }
+        }
+    }
 
-			clienteI = this.listaClientes.get(i);
+    @Override
+    public int getColumnCount() {
+        return columnas.length;
+    }
 
-			if (clienteI.getDni().equals(cliente.getDni())) {
-				this.listaClientes.set(i, cliente);
-			}
-		}
-	}
+    @Override
+    public int getRowCount() {
+        return listaClientes.size();
+    }
 
-	@Override
-	public int getColumnCount() {
-		return columnas.length;
-	}
+    @Override
+    public String getColumnName(int arg0) {
+        return columnas[arg0];
+    }
 
-	@Override
-	public int getRowCount() {
-		return listaClientes.size();
-	}
+    @Override
+    public Object getValueAt(int arg0, int arg1) {
 
-	@Override
-	public String getColumnName(int arg0) {
-		return columnas[arg0];
-	}
+        String stringPosicion = null;
+        Cliente cliente = this.listaClientes.get(arg0);
 
-	@Override
-	public Object getValueAt(int arg0, int arg1) {
+        switch (arg1) {
+            case 0:
+                stringPosicion = String.valueOf(cliente.getDni());
+                break;
+            case 1:
+                stringPosicion = cliente.getNombre();
+                break;
+            case 2:
+                stringPosicion = cliente.getApellido();
+                break;
+            case 3:
+                stringPosicion = cliente.getTelefono();
+                break;
+        }
+        return stringPosicion;
+    }
 
-		String stringPosicion = null;
-		Cliente cliente = this.listaClientes.get(arg0);
+    @Override
+    public void addListDataListener(ListDataListener l) {
 
-		switch (arg1) {
-		case 0:
-			stringPosicion = String.valueOf(cliente.getDni());
-			break;
-		case 1:
-			stringPosicion = cliente.getNombre();
-			break;
-		case 2:
-			stringPosicion = cliente.getApellido();
-			break;
-		case 3:
-			stringPosicion = cliente.getTelefono();
-			break;
-		}
-		return stringPosicion;
-	}
+    }
 
-	// ///////////////////////
+    @Override
+    public Cliente getElementAt(int index) {
+        return this.listaClientes.get(index);
+    }
 
-	@Override
-	public void addListDataListener(ListDataListener l) {
+    @Override
+    public int getSize() {
+        return this.listaClientes.size();
+    }
 
-	}
+    @Override
+    public void removeListDataListener(ListDataListener l) {
 
-	@Override
-	public Cliente getElementAt(int index) {
-		return this.listaClientes.get(index);
-	}
+    }
 
-	@Override
-	public int getSize() {
-		return this.listaClientes.size();
-	}
+    @Override
+    public Object getSelectedItem() {
+        return this.selectedItem;
+    }
 
-	@Override
-	public void removeListDataListener(ListDataListener l) {
-		// TODO Auto-generated method stub
+    @Override
+    public void setSelectedItem(Object arg0) {
+        this.selectedItem = (Cliente) arg0;
 
-	}
-
-	@Override
-	public Object getSelectedItem() {
-		return this.selectedItem;
-	}
-
-	@Override
-	public void setSelectedItem(Object arg0) {
-		this.selectedItem = (Cliente) arg0;
-
-	}
+    }
 
 }

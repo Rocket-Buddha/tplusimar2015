@@ -1,6 +1,5 @@
 package com.github.rb.tplusimar2015.empleados.impl;
 
-
 import javax.swing.JOptionPane;
 import com.github.rb.tplusimar2015.core.pojo.Empleado;
 import com.github.rb.tplusimar2015.exceptions.GUIException;
@@ -13,147 +12,162 @@ import com.github.rb.tplusimar2015.core.gui.impl.PrincipalVentana;
 import com.github.rb.tplusimar2015.core.InterfaceModuleController;
 import com.github.rb.tplusimar2015.core.impl.MainController;
 import com.github.rb.tplusimar2015.exceptions.DAOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class EmpleadoController implements  InterfaceModuleController{
+public final class EmpleadoController implements InterfaceModuleController {
 
-	private final MainController mainController;
-	private static EmpleadoController INSTANCE;
+    private final MainController mainController;
+    private static EmpleadoController INSTANCE;
 
     public static EmpleadoController getInstance(MainController mainController) {
 
         synchronized (EmpleadoController.class) {
-            if (INSTANCE == null) {
-                
-                INSTANCE = new EmpleadoController(mainController);
-            }
-            return INSTANCE;
+
+            INSTANCE = (INSTANCE == null) ? new EmpleadoController(mainController) : INSTANCE;
         }
+        return INSTANCE;
     }
 
     private EmpleadoController(MainController mainController) {
         this.mainController = mainController;
     }
 
-	
-	@Override
-	public void mostrarPanelListar() {
-		try {
+    @Override
+    public void mostrarPanelListar() {
+        try {
 
-			EmpleadoListarSoportePanel panelListado = new EmpleadoListarSoportePanel(this, EmpleadoModelo.getInstance());
+            EmpleadoListarSoportePanel panelListado = new EmpleadoListarSoportePanel(this,
+                    EmpleadoModelo.getInstance());
 
-			EmpleadoModelo.getInstance().addTableModelListener(panelListado.getTabla());
+            EmpleadoModelo.getInstance()
+                    .addTableModelListener(panelListado.getTabla());
 
-			this.mainController.render(panelListado);
+            this.mainController
+                    .render(panelListado);
 
-		} catch (RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
-		
-	}
+        } catch (ModelException |RuntimeException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
 
-	@Override
-	public void mostrarPanelAlta() {
-		try {
+    }
 
-			PanelSoporteForm panelSoporteForm = new EmpleadoAltaSoportePanel(this);
-			
-			this.mainController.render(panelSoporteForm);
+    @Override
+    public void mostrarPanelAlta() {
 
-		} catch (GUIException | RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
-	
-	}
+        try {
 
-	@Override
-	public void mostrarPanelModificar(Object empleado) {
-		try {
+            PanelSoporteForm panelSoporteForm = new EmpleadoAltaSoportePanel(this);
 
-			PanelSoporteForm panelSoporteForm = new EmpleadoModificarSoportePanel(this, (Empleado) empleado);
+            this.mainController
+                    .render(panelSoporteForm);
 
-			this.mainController.render(panelSoporteForm);
+        } catch (GUIException | RuntimeException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
 
-		} catch (GUIException | RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
-		
-	}
+    }
 
-	@Override
-	public void alta(Object empleado) {
-		try {
+    @Override
+    public void mostrarPanelModificar(Object empleado) {
 
-			Integer respuesta = JOptionPane.showConfirmDialog(
-					PrincipalVentana.getInstance(this.mainController),
-					"¿Esta seguro que desea dar de alta el Empleado?");
+        try {
 
-			if (respuesta == JOptionPane.OK_OPTION) {
+            PanelSoporteForm panelSoporteForm = new EmpleadoModificarSoportePanel(this,
+                    (Empleado) empleado);
 
-				EmpleadoModelo.getInstance().altaEmpleado((Empleado) empleado);
-				this.mostrarPanelListar();
-			}
-			if (respuesta == JOptionPane.NO_OPTION) {} else { //REFACTOREAR ESTO
-				this.mostrarPanelListar();
-			}
+            this.mainController
+                    .render(panelSoporteForm);
 
-		} catch (ModelException | RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		} catch (DAOException ex) {
-                Logger.getLogger(EmpleadoController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (GUIException | RuntimeException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
+
+    }
+
+    @Override
+    public void alta(Object empleado) {
+        try {
+
+            Integer respuesta = JOptionPane.showConfirmDialog(
+                    PrincipalVentana.getInstance(this.mainController),
+                    "¿Esta seguro que desea dar de alta el Empleado?");
+
+            if (respuesta == JOptionPane.OK_OPTION) {
+
+                EmpleadoModelo.getInstance()
+                        .altaEmpleado((Empleado) empleado);
+                this.mostrarPanelListar();
             }
-		
-	}
+            if (respuesta == JOptionPane.NO_OPTION) {
+            } else {
+                this.mostrarPanelListar();
+            }
 
-	@Override
-	public void baja(Object empleado) {
-		
-		try {
+        } catch (ModelException | RuntimeException | DAOException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
 
-			Integer respuesta = JOptionPane.showConfirmDialog(
-					PrincipalVentana.getInstance(this.mainController), "�Esta seguro que desea eliminar el Empleado?");
+    }
 
-			if (respuesta == JOptionPane.OK_OPTION) {
+    @Override
+    public void baja(Object empleado) {
 
-				EmpleadoModelo.getInstance().bajaEmpleado((Empleado) empleado);
-			} else {
-			}
+        try {
 
-		} catch (ModelException | RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
-		
-	}
+            Integer respuesta = JOptionPane.showConfirmDialog(
+                    PrincipalVentana.getInstance(this.mainController),
+                    "¿Esta seguro que desea eliminar el Empleado?");
 
-	@Override
-	public void modificar(Object empleado) {
-		try {
-			Integer respuesta = JOptionPane.showConfirmDialog(
-					PrincipalVentana.getInstance(this.mainController),
-					"¿Esta seguro que desea modificar el Empleado?");
+            if (respuesta == JOptionPane.OK_OPTION) {
 
-			if (respuesta == JOptionPane.OK_OPTION) {
+                EmpleadoModelo.getInstance()
+                        .bajaEmpleado((Empleado) empleado);
+            } else {
+            }
 
-				EmpleadoModelo.getInstance().modificarEmpleado((Empleado) empleado);
-				this.mostrarPanelListar();
+        } catch (ModelException | RuntimeException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
+    }
 
-				if (respuesta == JOptionPane.NO_OPTION) {
-				} else {
-					this.mostrarPanelListar();
-				}
-			}
-		} catch (ModelException | RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
-		
-	}
+    @Override
+    public void modificar(Object empleado) {
+        try {
+            Integer respuesta = JOptionPane.showConfirmDialog(
+                    PrincipalVentana.getInstance(this.mainController),
+                    "¿Esta seguro que desea modificar el Empleado?");
 
-        @Override
-	public MainController getMainController(){
-		
-		return this.mainController;
-		
-	}
+            if (respuesta == JOptionPane.OK_OPTION) {
+
+                EmpleadoModelo.getInstance()
+                        .modificarEmpleado((Empleado) empleado);
+                this.mostrarPanelListar();
+
+                if (respuesta == JOptionPane.NO_OPTION) {
+                } else {
+                    this.mostrarPanelListar();
+                }
+            }
+        } catch (ModelException | RuntimeException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
+
+    }
+
+    @Override
+    public MainController getMainController() {
+
+        return this.mainController;
+    }
 }
-

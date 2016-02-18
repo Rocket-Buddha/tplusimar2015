@@ -4,11 +4,10 @@ import com.github.rb.tplusimar2015.core.InterfaceModuleController;
 import com.github.rb.tplusimar2015.core.pojo.Auto;
 import com.github.rb.tplusimar2015.core.pojo.Cliente;
 import com.github.rb.tplusimar2015.core.pojo.Modelo;
-
 import com.github.rb.tplusimar2015.core.gui.PanelSoporteList;
 import javax.swing.table.AbstractTableModel;
 
-public class AutoListarSoportePanel extends PanelSoporteList {
+public final class AutoListarSoportePanel extends PanelSoporteList {
 
     public AutoListarSoportePanel(InterfaceModuleController controller,
                                   AbstractTableModel modelo){
@@ -22,17 +21,23 @@ public class AutoListarSoportePanel extends PanelSoporteList {
 
         Integer indice = super.getPanelCentral().getTabla().getSelectedRow();
 
-        String patente = (String) (super.getPanelCentral().getTabla()
+        String patente = (String) (super.getPanelCentral()
+                .getTabla()
                 .getValueAt(indice, 0));
-        String nChasis = (String) (super.getPanelCentral().getTabla()
+        String nChasis = (String) (super.getPanelCentral()
+                .getTabla()
                 .getValueAt(indice, 1));
-        String nMotor = (String) (super.getPanelCentral().getTabla()
+        String nMotor = (String) (super.getPanelCentral()
+                .getTabla()
                 .getValueAt(indice, 2));
-        String descripcion = (String) (super.getPanelCentral().getTabla()
+        String descripcion = (String) (super.getPanelCentral()
+                .getTabla()
                 .getValueAt(indice, 3));
         Integer dniCliente = Integer.valueOf((String) (super.getPanelCentral()
-                .getTabla().getValueAt(indice, 4)));
-        String modelo = (String) (super.getPanelCentral().getTabla()
+                .getTabla()
+                .getValueAt(indice, 4)));
+        String modelo = (String) (super.getPanelCentral()
+                .getTabla()
                 .getValueAt(indice, 5));
 
         Auto autoRetorno = new Auto();

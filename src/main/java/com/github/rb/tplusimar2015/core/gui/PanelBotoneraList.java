@@ -4,54 +4,39 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-
 public abstract class PanelBotoneraList extends JPanel {
 
+    private final JButton jbAlta;
+    private final JButton jbActualizar;
+    private final JButton jbEliminar;
 
+    public PanelBotoneraList() {
 
-	private JButton jbAlta;
-	private JButton jbActualizar;
-	private JButton jbEliminar;
+        this.jbAlta = new JButton("Alta");
+        this.jbActualizar = new JButton("Actualizar");
+        this.jbEliminar = new JButton("Eliminar");
 
-	public PanelBotoneraList() {
+        this.armarPanel();
+    }
 
-		this.jbAlta = new JButton("Alta");
-		this.jbActualizar = new JButton("Actualizar");
-		this.jbEliminar = new JButton("Eliminar");
+    private void armarPanel() {
 
-		this.armarPanel();
-	}
+        this.setLayout(new FlowLayout());
+        this.add(jbAlta);
+        this.add(jbActualizar);
+        this.add(jbEliminar);
+    }
 
-	private void armarPanel() {
+    public final JButton getJbAlta() {
+        return jbAlta;
+    }
 
-		this.setLayout(new FlowLayout());
-		this.add(jbAlta);
-		this.add(jbActualizar);
-		this.add(jbEliminar);
-	}
+    public final JButton getJbActualizar() {
+        return jbActualizar;
+    }
 
-	public JButton getJbAlta() {
-		return jbAlta;
-	}
-
-	public void setJbAlta(JButton jbAlta) {
-		this.jbAlta = jbAlta;
-	}
-
-	public JButton getJbActualizar() {
-		return jbActualizar;
-	}
-
-	public void setJbActualizar(JButton jbActualizar) {
-		this.jbActualizar = jbActualizar;
-	}
-
-	public JButton getJbEliminar() {
-		return jbEliminar;
-	}
-
-	public void setJbEliminar(JButton jbEliminar) {
-		this.jbEliminar = jbEliminar;
-	}
+    public final JButton getJbEliminar() {
+        return jbEliminar;
+    }
 
 }

@@ -1,79 +1,77 @@
 package com.github.rb.tplusimar2015.core.pojo;
 
-
-
 public abstract class Vehiculo {
 
-	private String patente;
-	private String numeroDeChasis;
-	private String numeroDeMotor;
-	private String descripcionParticular;
-	private Cliente cliente;
-	private Modelo modelo;
+    private String patente;
+    private String numeroDeChasis;
+    private String numeroDeMotor;
+    private String descripcionParticular;
+    private Cliente cliente;
+    private Modelo modelo;
 
-	public Vehiculo() {
+    public Vehiculo() {
 
-	}
+    }
 
-	public Vehiculo(String patente, String numeroDeChasis,
-			String numeroDeMotor, String descripcionParticular,
-			Cliente cliente, Modelo modelo) {
-		this.patente = patente;
-		this.numeroDeChasis = numeroDeChasis;
-		this.numeroDeMotor = numeroDeMotor;
-		this.descripcionParticular = descripcionParticular;
-		this.cliente = cliente;
-		this.modelo = modelo;
-	}
+    public Vehiculo(String patente, String numeroDeChasis,
+            String numeroDeMotor,
+            String descripcionParticular,
+            Cliente cliente,
+            Modelo modelo) {
 
-	public String getPatente() {
-		return patente;
-	}
+        this.patente = patente;
+        this.numeroDeChasis = numeroDeChasis;
+        this.numeroDeMotor = numeroDeMotor;
+        this.descripcionParticular = descripcionParticular;
+        this.cliente = cliente;
+        this.modelo = modelo;
+    }
 
-	public void setPatente(String patente) {
-		this.patente = patente;
-	}
+    public String getPatente() {
+        return patente;
+    }
 
-	public String getNumeroDeChasis() {
-		return numeroDeChasis;
-	}
+    public void setPatente(String patente) {
+        this.patente = patente;
+    }
 
-	public void setNumeroDeChasis(String numeroDeChasis) {
-		this.numeroDeChasis = numeroDeChasis;
-	}
+    public String getNumeroDeChasis() {
+        return numeroDeChasis;
+    }
 
-	public String getNumeroDeMotor() {
-		return numeroDeMotor;
-	}
+    public void setNumeroDeChasis(String numeroDeChasis) {
+        this.numeroDeChasis = numeroDeChasis;
+    }
 
-	public void setNumeroDeMotor(String numeroDeMotor) {
-		this.numeroDeMotor = numeroDeMotor;
-	}
+    public String getNumeroDeMotor() {
+        return numeroDeMotor;
+    }
 
-	public String getDescripcionParticular() {
-		return descripcionParticular;
-	}
+    public void setNumeroDeMotor(String numeroDeMotor) {
+        this.numeroDeMotor = numeroDeMotor;
+    }
 
-	public void setDescripcionParticular(String descripcionParticular) {
-		this.descripcionParticular = descripcionParticular;
-	}
+    public String getDescripcionParticular() {
+        return descripcionParticular;
+    }
 
-	public Cliente getCliente() {
-		return cliente;
-	}
+    public void setDescripcionParticular(String descripcionParticular) {
+        this.descripcionParticular = descripcionParticular;
+    }
 
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
-	}
+    public Cliente getCliente() {
+        return cliente;
+    }
 
-	public Modelo getModelo() {
-		return modelo;
-	}
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
 
-	public void setModelo(Modelo modelo) {
-		this.modelo = modelo;
-	}
+    public Modelo getModelo() {
+        return modelo;
+    }
 
-
-
+    public void setModelo(Modelo modelo) {
+        this.modelo = modelo;
+    }
 }

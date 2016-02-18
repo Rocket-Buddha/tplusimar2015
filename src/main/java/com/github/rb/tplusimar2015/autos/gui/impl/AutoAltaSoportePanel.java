@@ -18,27 +18,36 @@ public final class AutoAltaSoportePanel extends PanelSoporteForm {
 
         super(controller,
                 new AutoPanelBotoneraForm(),
-                new AutoPanelFormularioForm(modeloClientes, modeloModelos), PanelSoporteForm.Tipo.ALTA);
+                new AutoPanelFormularioForm(modeloClientes, modeloModelos),
+                PanelSoporteForm.Tipo.ALTA);
     }
 
     @Override
     protected Auto prepararDatos() {
-
         PanelFormularioForm panelCentral = super.getPanelCentral();
 
         String descripcion = ((AutoPanelFormularioForm) panelCentral)
-                .getJtfDescripcion().getText();
+                .getJtfDescripcion()
+                .getText();
         String numeroChasis = ((AutoPanelFormularioForm) panelCentral)
-                .getJtfNumeroChasis().getText();
+                .getJtfNumeroChasis()
+                .getText();
         String numeroMotor = ((AutoPanelFormularioForm) panelCentral)
-                .getJtfNumeroMotor().getText();
+                .getJtfNumeroMotor()
+                .getText();
         String patente = ((AutoPanelFormularioForm) panelCentral)
-                .getJtfPatente().getText();
-
+                .getJtfPatente()
+                .getText();
+        
         Auto auto = new Auto();
-        Cliente cliente = (Cliente) ((AutoPanelFormularioForm) panelCentral).getJcbDni().getSelectedItem();
-        Modelo modelo = (Modelo) ((AutoPanelFormularioForm) panelCentral).getJcbModelo().getSelectedItem();
 
+        Cliente cliente = (Cliente) ((AutoPanelFormularioForm) panelCentral)
+                .getJcbDni()
+                .getSelectedItem();
+
+        Modelo modelo = (Modelo) ((AutoPanelFormularioForm) panelCentral)
+                .getJcbModelo()
+                .getSelectedItem();
         auto.setDescripcionParticular(descripcion.toUpperCase());
         auto.setCliente(cliente);
         auto.setModelo(modelo);

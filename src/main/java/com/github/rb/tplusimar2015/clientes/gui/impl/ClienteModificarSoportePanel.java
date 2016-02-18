@@ -11,10 +11,11 @@ public final class ClienteModificarSoportePanel extends PanelSoporteForm {
     public ClienteModificarSoportePanel(InterfaceModuleController controller,
             Cliente cliente) throws GUIException {
 
-        super(controller, new ClientePanelBotoneraForm(),
-                new ClientePanelFormularioForm(cliente), PanelSoporteForm.Tipo.MODIFICACION);
+        super(controller,
+                new ClientePanelBotoneraForm(),
+                new ClientePanelFormularioForm(cliente),
+                PanelSoporteForm.Tipo.MODIFICACION);
 
-     
     }
 
     @Override
@@ -23,17 +24,21 @@ public final class ClienteModificarSoportePanel extends PanelSoporteForm {
         PanelFormularioForm panelCentral = super.getPanelCentral();
 
         Integer dni = Integer.valueOf(((ClientePanelFormularioForm) panelCentral)
-                .getJtfDni().getText());
+                .getJtfDni()
+                .getText());
         String nombre = ((ClientePanelFormularioForm) panelCentral)
-                .getJtfNombre().getText();
+                .getJtfNombre()
+                .getText();
         String apellido = ((ClientePanelFormularioForm) panelCentral).getJtfApellido()
                 .getText();
         String telefono = ((ClientePanelFormularioForm) panelCentral).getJtfTelefono()
                 .getText();
 
-        Cliente cliente = new Cliente(dni, nombre.toUpperCase(), apellido.toUpperCase(), telefono.toUpperCase());
+        Cliente cliente = new Cliente(dni,
+                nombre.toUpperCase(),
+                apellido.toUpperCase(),
+                telefono.toUpperCase());
 
         return cliente;
     }
-
 }

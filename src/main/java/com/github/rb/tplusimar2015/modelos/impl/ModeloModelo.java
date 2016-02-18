@@ -8,34 +8,29 @@ import com.github.rb.tplusimar2015.core.pojo.Modelo;
 import com.github.rb.tplusimar2015.exceptions.DAOException;
 import com.github.rb.tplusimar2015.exceptions.ModelException;
 
-public class ModeloModelo extends AbstractTableModel implements ComboBoxModel<Modelo> {
+public final class ModeloModelo extends AbstractTableModel implements ComboBoxModel<Modelo> {
 
     private ArrayList<Modelo> listaModelos;
-    private String[] columnas = {"NºMODELO","NOMBRE", "DESCRIPCION", "MARCA"};
+    private final String[] columnas;
     private Modelo selectedItem;
     private static ModeloModelo INSTANCE;
 
     public static ModeloModelo getInstance() throws ModelException {
 
-        if (INSTANCE == null) {
-            createInstance();
+        synchronized (ModeloModelo.class) {
+
+            INSTANCE = (INSTANCE == null) ? new ModeloModelo() : INSTANCE;
         }
         return INSTANCE;
 
     }
 
-    private static void createInstance() throws ModelException {
-        if (INSTANCE == null) {
-            synchronized (ModeloModelo.class) {
-
-                if (INSTANCE == null) {
-                    INSTANCE = new ModeloModelo();
-                }
-            }
-        }
-    }
-
     private ModeloModelo() throws ModelException {
+        this.columnas = new String[]{"NºMODELO",
+            "NOMBRE",
+            "DESCRIPCION",
+            "MARCA"};
+
         try {
 
             this.listaModelos = (ArrayList<Modelo>) ModeloDAOImpl.getInstance().listarModelos();
@@ -54,9 +49,10 @@ public class ModeloModelo extends AbstractTableModel implements ComboBoxModel<Mo
             modeloDAOImpl.altaModelo(modelo);
 
             this.listaModelos = (ArrayList<Modelo>) ModeloDAOImpl.getInstance()
-                    .listarModelos();// ojo aca esto es un super chinoo!!!
+                    .listarModelos(); //REFACT
 
             this.fireTableDataChanged();
+
         } catch (DAOException e) {
             throw new ModelException(e);
         }
@@ -65,13 +61,14 @@ public class ModeloModelo extends AbstractTableModel implements ComboBoxModel<Mo
     public void bajaModelo(Modelo modelo) throws ModelException {
 
         try {
-            
 
             ModeloDAOImpl.getInstance()
-                .bajaModelo(modelo);
+                    .bajaModelo(modelo);
+
             this.modeloRemover(modelo);
-            
+
             this.fireTableDataChanged();
+
         } catch (DAOException e) {
             throw new ModelException(e);
         }
@@ -86,15 +83,15 @@ public class ModeloModelo extends AbstractTableModel implements ComboBoxModel<Mo
             modeloDAOImpl.modificarModelo(modelo);
 
             this.fireTableDataChanged();
+
         } catch (DAOException e) {
             throw new ModelException(e);
         }
     }
 
-    // metodos help//refactoriar!!!
     private void modeloRemover(Modelo modelo) throws ModelException {
 
-        Modelo modeloI = new Modelo();
+        Modelo modeloI;
 
         for (int i = 0; i < this.listaModelos.size(); i++) {
 
@@ -102,14 +99,14 @@ public class ModeloModelo extends AbstractTableModel implements ComboBoxModel<Mo
 
             if (modeloI.getN_modelo().equals(modelo.getN_modelo())) {
                 this.listaModelos.remove(i);
-                i=-1;
+                i = -1;
             }
         }
     }
 
     private void modeloModificar(Modelo modelo) throws ModelException {
 
-        Modelo modeloI = new Modelo();
+        Modelo modeloI;
 
         for (int i = 0; i < this.listaModelos.size(); i++) {
 
@@ -137,7 +134,8 @@ public class ModeloModelo extends AbstractTableModel implements ComboBoxModel<Mo
     }
 
     @Override
-    public Object getValueAt(int arg0, int arg1) {
+    public Object getValueAt(int arg0,
+            int arg1) {
 
         String stringPosicion = null;
         Modelo modelo = this.listaModelos.get(arg0);
@@ -159,7 +157,6 @@ public class ModeloModelo extends AbstractTableModel implements ComboBoxModel<Mo
         return stringPosicion;
     }
 
-
     @Override
     public void addListDataListener(ListDataListener l) {
 
@@ -177,8 +174,6 @@ public class ModeloModelo extends AbstractTableModel implements ComboBoxModel<Mo
 
     @Override
     public void removeListDataListener(ListDataListener l) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -191,5 +186,4 @@ public class ModeloModelo extends AbstractTableModel implements ComboBoxModel<Mo
         this.selectedItem = (Modelo) arg0;
 
     }
-
 }

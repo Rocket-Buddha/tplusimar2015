@@ -4,7 +4,6 @@ import com.github.rb.tplusimar2015.core.impl.MainController;
 
 public interface InterfaceModuleController {
 
-	
 	public abstract void mostrarPanelListar();
 
 	public abstract void mostrarPanelAlta();
@@ -18,5 +17,5 @@ public interface InterfaceModuleController {
 	public abstract void modificar(Object object);
 	
 	public abstract MainController getMainController();
-	
+        
 }

@@ -15,241 +15,237 @@ import com.github.rb.tplusimar2015.core.pojo.Modelo;
 import com.github.rb.tplusimar2015.exceptions.DAOException;
 import com.github.rb.tplusimar2015.modelos.impl.ModeloDAOImpl;
 
-public class AutoDAOImpl implements AutoDAOInterface {
+public final class AutoDAOImpl implements AutoDAOInterface {
 
-	private static AutoDAOImpl INSTANCE;
+    private static AutoDAOImpl INSTANCE;
 
-	public static AutoDAOImpl getInstance() {
+    public static AutoDAOImpl getInstance() {
 
-		if (INSTANCE == null)
-			createInstance();
-		return INSTANCE;
+        synchronized (AutoDAOImpl.class) {
 
-	}
+            INSTANCE = (INSTANCE == null) ? new AutoDAOImpl() : INSTANCE;
+        }
+        return INSTANCE;
 
-	private static void createInstance() {
-		
-		if (INSTANCE == null) {
-			synchronized (AutoDAOImpl.class) {
-				
-				if (INSTANCE == null) {
-					INSTANCE = new AutoDAOImpl();
-				}
-			}
-		}
-	}
+    }
 
-	@Override
-	public void altaAuto(Auto auto) throws DAOException {
+    private AutoDAOImpl() {
 
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null;
+    }
 
-		try {
+    @Override
+    public void altaAuto(Auto auto) throws DAOException {
 
-			conexion = dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("INSERT INTO tb_autos (patente,n_chasis,n_motor,descripcion,dni_cliente,modelo) VALUES (?,?,?,?,?,?)");
-			preparedstatement.setString(1, auto.getPatente());
-			preparedstatement.setString(2, auto.getNumeroDeChasis());
-			preparedstatement.setString(3, auto.getNumeroDeMotor());
-			preparedstatement.setString(4, auto.getDescripcionParticular());
-			preparedstatement.setInt(5, auto.getCliente().getDni());
-			preparedstatement.setInt(6, auto.getModelo().getN_modelo());
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
 
-			preparedstatement.executeUpdate();
+        try {
 
-			conexion.commit();
-			dbManager.closeConnection(conexion);
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("INSERT INTO tb_autos (patente,n_chasis,n_motor,descripcion,dni_cliente,modelo) VALUES (?,?,?,?,?,?)");
+            preparedstatement.setString(1, auto.getPatente());
+            preparedstatement.setString(2, auto.getNumeroDeChasis());
+            preparedstatement.setString(3, auto.getNumeroDeMotor());
+            preparedstatement.setString(4, auto.getDescripcionParticular());
+            preparedstatement.setInt(5, auto.getCliente().getDni());
+            preparedstatement.setInt(6, auto.getModelo().getN_modelo());
 
-		} catch (SQLException e) {
-			try {
-				conexion.rollback();
-				throw new DAOException(e);
-			} catch (SQLException e1) {
-				throw new DAOException(e1);
-			}
-		} finally {
-			try {
-				dbManager.closeConnection(conexion);
-			} catch (SQLException e2) {
-				throw new DAOException(e2);
-			}
-		}
-	}
+            preparedstatement.executeUpdate();
 
-	@Override
-	public void bajaAuto(Auto auto) throws DAOException {
+            conexion.commit();
+            dbManager.closeConnection(conexion);
 
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null; 
+        } catch (SQLException e) {
+            try {
+                if (conexion != null) {
+                    conexion.rollback();
+                }
+                throw new DAOException(e);
+            } catch (SQLException e1) {
+                throw new DAOException(e1);
+            }
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e2) {
+                throw new DAOException(e2);
+            }
+        }
+    }
 
-		try {
-			
-			conexion= dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("DELETE FROM tb_autos WHERE patente=?");
-			preparedstatement.setString(1, auto.getPatente());
+    @Override
+    public void bajaAuto(Auto auto) throws DAOException {
 
-			preparedstatement.executeUpdate();
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
 
-			conexion.commit();
-			dbManager.closeConnection(conexion);
+        try {
 
-		} catch (SQLException e) {
-			try {
-				conexion.rollback();
-				throw new DAOException(e);
-			} catch (SQLException e1) {
-				throw new DAOException(e);
-			}
-		} finally {
-			try{
-			dbManager.closeConnection(conexion);
-			}catch(SQLException e3){
-				throw new DAOException(e3);
-			}
-		}
-	}
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("DELETE FROM tb_autos WHERE patente=?");
+            preparedstatement.setString(1, auto.getPatente());
 
-	@Override
-	public void modificarAuto(Auto auto) throws DAOException {
+            preparedstatement.executeUpdate();
 
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null;
+            conexion.commit();
+            dbManager.closeConnection(conexion);
 
-		try {
-			
-			conexion =  dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("UPDATE TB_AUTOS SET n_chasis=?,n_motor=?,descripcion=?,dni_cliente=?,modelo=? WHERE patente=?");
-			preparedstatement.setString(1, auto.getNumeroDeChasis());
-			preparedstatement.setString(2, auto.getNumeroDeMotor());
-			preparedstatement.setString(3, auto.getDescripcionParticular());
-			preparedstatement.setInt(4, auto.getCliente().getDni());
-			preparedstatement.setInt(5, auto.getModelo().getN_modelo());
-			preparedstatement.setString(6, auto.getPatente());
+        } catch (SQLException e) {
+            try {
+                conexion.rollback();
+                throw new DAOException(e);
+            } catch (SQLException e1) {
+                throw new DAOException(e);
+            }
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
+    }
 
-			preparedstatement.executeUpdate();
+    @Override
+    public void modificarAuto(Auto auto) throws DAOException {
 
-			conexion.commit();
-			dbManager.closeConnection(conexion);
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
 
-		} catch (SQLException e) {
-			try {
-				conexion.rollback();
-				throw new DAOException(e);
-			} catch (SQLException e1) {
-				throw new DAOException(e1);
-			}
-		} finally {
-			try{
-			dbManager.closeConnection(conexion);
-			}catch(SQLException e3){
-				throw new DAOException(e3);
-			}
-		}
+        try {
 
-	}
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("UPDATE TB_AUTOS SET n_chasis=?,n_motor=?,descripcion=?,dni_cliente=?,modelo=? WHERE patente=?");
+            preparedstatement.setString(1, auto.getNumeroDeChasis());
+            preparedstatement.setString(2, auto.getNumeroDeMotor());
+            preparedstatement.setString(3, auto.getDescripcionParticular());
+            preparedstatement.setInt(4, auto.getCliente().getDni());
+            preparedstatement.setInt(5, auto.getModelo().getN_modelo());
+            preparedstatement.setString(6, auto.getPatente());
 
-	@Override
-	public Collection<Auto> listarAutos() throws DAOException {
+            preparedstatement.executeUpdate();
 
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null;
-		Collection<Auto> listaAutosResultado = new ArrayList<Auto>();
+            conexion.commit();
+            dbManager.closeConnection(conexion);
 
-		try {
-			
-			conexion = dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("SELECT * FROM TB_AUTOS");
-			ResultSet resultSet = preparedstatement.executeQuery();
+        } catch (SQLException e) {
+            try {
+                conexion.rollback();
+                throw new DAOException(e);
+            } catch (SQLException e1) {
+                throw new DAOException(e1);
+            }
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
 
-			while (resultSet.next()) {
+    }
 
-				String patente = resultSet.getString("patente");
-				String nChasis = resultSet.getString("n_chasis");
-				String nMotor = resultSet.getString("n_motor");
-				String descripcion = resultSet.getString("descripcion");
-				Integer dniCliente = resultSet.getInt("dni_cliente");
-				Integer nModelo = resultSet.getInt("modelo");
+    @Override
+    public Collection<Auto> listarAutos() throws DAOException {
 
-				Auto auto = new Auto();
-				Cliente cliente = new Cliente(dniCliente);
-				
-				Modelo modelo= new Modelo();
-				modelo.setN_modelo(nModelo);
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
+        Collection<Auto> listaAutosResultado = new ArrayList<Auto>();
 
-				auto.setCliente(cliente);
-				auto.setDescripcionParticular(descripcion);
-				auto.setModelo(ModeloDAOImpl.getInstance().buscarModelo(modelo));
-				auto.setNumeroDeChasis(nChasis);
-				auto.setNumeroDeMotor(nMotor);
-				auto.setPatente(patente);
+        try {
 
-				listaAutosResultado.add(auto);
-			}
-		} catch (SQLException e) {
-			throw new DAOException(e);
-		} finally {
-			try{
-			dbManager.closeConnection(conexion);
-			}catch(SQLException e3){
-				throw new DAOException(e3);
-			}
-		}
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("SELECT * FROM TB_AUTOS");
+            ResultSet resultSet = preparedstatement.executeQuery();
 
-		return listaAutosResultado;
-	}
+            while (resultSet.next()) {
 
-	@Override
-	public Auto buscarAuto(Auto auto) throws DAOException {
+                String patente = resultSet.getString("patente");
+                String nChasis = resultSet.getString("n_chasis");
+                String nMotor = resultSet.getString("n_motor");
+                String descripcion = resultSet.getString("descripcion");
+                Integer dniCliente = resultSet.getInt("dni_cliente");
+                Integer nModelo = resultSet.getInt("modelo");
 
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null; 
-		Auto autoResultado = new Auto();
+                Auto auto = new Auto();
+                Cliente cliente = new Cliente(dniCliente);
 
-		try {
-			
-			conexion=dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("SELECT * FROM TB_AUTOS WHERE PATENTE=?");
-			preparedstatement.setString(1, auto.getPatente());
-			ResultSet resultSet = preparedstatement.executeQuery();
+                Modelo modelo = new Modelo();
+                modelo.setN_modelo(nModelo);
 
-			while (resultSet.next()) {
+                auto.setCliente(cliente);
+                auto.setDescripcionParticular(descripcion);
+                auto.setModelo(ModeloDAOImpl.getInstance().buscarModelo(modelo));
+                auto.setNumeroDeChasis(nChasis);
+                auto.setNumeroDeMotor(nMotor);
+                auto.setPatente(patente);
 
-				String patente = resultSet.getString("patente");
-				String nChasis = resultSet.getString("n_chasis");
-				String nMotor = resultSet.getString("n_motor");
-				String descripcion = resultSet.getString("descripcion");
-				Integer dniCliente = resultSet.getInt("dni_cliente");
-				Integer nModelo = resultSet.getInt("modelo");
+                listaAutosResultado.add(auto);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
 
-				Cliente cliente = new Cliente(dniCliente);
+        return listaAutosResultado;
+    }
 
-				Modelo modelo= new Modelo();
-				modelo.setN_modelo(nModelo);
+    @Override
+    public Auto buscarAuto(Auto auto) throws DAOException {
 
-				autoResultado.setCliente(cliente);
-				autoResultado.setDescripcionParticular(descripcion);
-				autoResultado.setModelo(ModeloDAOImpl.getInstance().buscarModelo(modelo));
-				autoResultado.setNumeroDeChasis(nChasis);
-				autoResultado.setNumeroDeMotor(nMotor);
-				autoResultado.setPatente(patente);
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
+        Auto autoResultado = new Auto();
 
-			}
-		} catch (SQLException e) {
-			throw new DAOException(e);
-		}finally {
-			try{
-			dbManager.closeConnection(conexion);
-			}catch(SQLException e3){
-				throw new DAOException(e3);
-			}
-		}
-		return autoResultado;
-	}
+        try {
+
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("SELECT * FROM TB_AUTOS WHERE PATENTE=?");
+            preparedstatement.setString(1, auto.getPatente());
+            ResultSet resultSet = preparedstatement.executeQuery();
+
+            while (resultSet.next()) {
+
+                String patente = resultSet.getString("patente");
+                String nChasis = resultSet.getString("n_chasis");
+                String nMotor = resultSet.getString("n_motor");
+                String descripcion = resultSet.getString("descripcion");
+                Integer dniCliente = resultSet.getInt("dni_cliente");
+                Integer nModelo = resultSet.getInt("modelo");
+
+                Cliente cliente = new Cliente(dniCliente);
+
+                Modelo modelo = new Modelo();
+                modelo.setN_modelo(nModelo);
+
+                autoResultado.setCliente(cliente);
+                autoResultado.setDescripcionParticular(descripcion);
+                autoResultado.setModelo(ModeloDAOImpl.getInstance().buscarModelo(modelo));
+                autoResultado.setNumeroDeChasis(nChasis);
+                autoResultado.setNumeroDeMotor(nMotor);
+                autoResultado.setPatente(patente);
+
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
+        return autoResultado;
+    }
 
 }

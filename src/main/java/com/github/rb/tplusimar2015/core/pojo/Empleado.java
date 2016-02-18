@@ -2,28 +2,50 @@ package com.github.rb.tplusimar2015.core.pojo;
 
 public class Empleado extends Persona {
 
-	private Integer legajo;
-	private String direccion;
-        private Senority senority;
-        private Rol rol;
+    private Integer legajo;
+    private String direccion;
+    private Senority senority;
+    private Rol rol;
 
-    public Empleado(Integer legajo, String direccion, Senority senority, Rol rol) {
+    public Empleado(Integer legajo,
+            String direccion,
+            Senority senority,
+            Rol rol) {
+
         this.legajo = legajo;
         this.direccion = direccion;
         this.senority = senority;
         this.rol = rol;
     }
 
-    public Empleado(Integer legajo, String direccion, Senority senority, Rol rol, Integer dni, String nombre, String apellido, String telefono) {
-        super(dni, nombre, apellido, telefono);
+    public Empleado(Integer legajo,
+            String direccion,
+            Senority senority,
+            Rol rol,
+            Integer dni,
+            String nombre,
+            String apellido,
+            String telefono) {
+
+        super(dni,
+                nombre,
+                apellido,
+                telefono);
+
         this.legajo = legajo;
         this.direccion = direccion;
         this.senority = senority;
         this.rol = rol;
     }
 
-    public Empleado(Integer legajo, String direccion, Senority senority, Rol rol, Integer dni) {
+    public Empleado(Integer legajo,
+            String direccion,
+            Senority senority,
+            Rol rol,
+            Integer dni) {
+
         super(dni);
+
         this.legajo = legajo;
         this.direccion = direccion;
         this.senority = senority;
@@ -31,7 +53,7 @@ public class Empleado extends Persona {
     }
 
     public Empleado() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super();
     }
 
     public Integer getLegajo() {
@@ -65,7 +87,13 @@ public class Empleado extends Persona {
     public void setRol(Rol rol) {
         this.rol = rol;
     }
-        
-        
+
+    @Override
+    public String toString() {
+
+        return super.getNombre()
+                + " "
+                + super.getApellido();
+    }
 
 }

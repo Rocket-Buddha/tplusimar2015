@@ -14,10 +14,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
+public final class EmpleadoDAOImpl implements EmpleadoDAOInterface {
 
     private static EmpleadoDAOImpl INSTANCE;
-    
 
     public static EmpleadoDAOImpl getInstance() {
         synchronized (EmpleadoDAOImpl.class) {
@@ -27,11 +26,6 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
         return INSTANCE;
     }
 
-    /**
-     *
-     * @param empleado
-     * @throws DAOException
-     */
     @Override
     public void altaEmpleado(Empleado empleado) throws DAOException {
 
@@ -44,7 +38,6 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
 
             PreparedStatement preparedstatement = conexion
                     .prepareStatement("INSERT INTO TB_EMPLEADOS ( DNI, NOMBRE, APELLIDO, TELEFONO, DIRECCION, ROL, SENORITY) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                      
 
             preparedstatement.setInt(1, empleado.getDni());
             preparedstatement.setString(2, empleado.getNombre());
@@ -55,7 +48,7 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
             preparedstatement.setString(7, empleado.getSenority().toString());
 
             preparedstatement.executeUpdate();
-            
+
             conexion.commit();
             dbManager.closeConnection(conexion);
 
@@ -78,7 +71,6 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
             }
         }
 
-        
     }
 
     @Override
@@ -91,8 +83,7 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
 
             conexion = dbManager.getConnection();
             PreparedStatement preparedstatement = conexion
-                    .prepareStatement("DELETE FROM TB_EMPLEADOS\n"
-                            + "WHERE N_LEGAJO = ?");
+                    .prepareStatement("DELETE FROM TB_EMPLEADOS WHERE N_LEGAJO = ?");
 
             preparedstatement.setInt(1, empleado.getLegajo());
 
@@ -129,9 +120,7 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
 
             conexion = dbManager.getConnection();
             PreparedStatement preparedstatement = conexion
-                    .prepareStatement("UPDATE TB_EMPLEADOS \n"
-                            + "SET DNI = ?, NOMBRE = ?, APELLIDO = ?, TELEFONO = ?, DIRECCION = ?, ROL = ?, SENORITY = ? \n"
-                            + "WHERE N_LEGAJO = ? ");
+                    .prepareStatement("UPDATE TB_EMPLEADOS SET DNI = ?, NOMBRE = ?, APELLIDO = ?, TELEFONO = ?, DIRECCION = ?, ROL = ?, SENORITY = ? WHERE N_LEGAJO = ? ");
 
             preparedstatement.setInt(1, empleado.getDni());
             preparedstatement.setString(2, empleado.getNombre());
@@ -177,8 +166,7 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
             conexion = dbManager.getConnection();
 
             PreparedStatement preparedstatement = conexion
-                    .prepareStatement("SELECT *\n"
-                            + "FROM TB_EMPLEADOS");
+                    .prepareStatement("SELECT * FROM TB_EMPLEADOS");
 
             ResultSet resultSet = preparedstatement.executeQuery();
 
@@ -192,8 +180,8 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
                 String direccion = resultSet.getString("DIRECCION");
                 Rol rol = Rol.valueOf(resultSet.getString("ROL"));
                 Senority senority = Senority.valueOf(resultSet.getString("SENORITY"));
-                
-               listaEmpleadosResultado.add(new Empleado(nLegajo,
+
+                listaEmpleadosResultado.add(new Empleado(nLegajo,
                         direccion,
                         senority,
                         rol,
@@ -201,9 +189,7 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
                         nombre,
                         apellido,
                         telefono));
-
             }
-            
         } catch (SQLException e) {
             throw new DAOException(e);
         } finally {
@@ -213,7 +199,6 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
                 throw new DAOException(e3);
             }
         }
-
         return listaEmpleadosResultado;
     }
 
@@ -228,10 +213,8 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
             conexion = dbManager.getConnection();
 
             PreparedStatement preparedstatement = conexion
-                    .prepareStatement("SELECT *\n" 
-                            +"FROM TB_EMPLEADOS\n" 
-                            +"WHERE N_LEGAJO = ?");
-            
+                    .prepareStatement("SELECT * FROM TB_EMPLEADOS  WHERE N_LEGAJO = ?");
+
             preparedstatement.setInt(1, empleado.getLegajo());
 
             ResultSet resultSet = preparedstatement.executeQuery();
@@ -254,7 +237,7 @@ public class EmpleadoDAOImpl implements EmpleadoDAOInterface {
                 empleado.setDireccion(direccion);
                 empleado.setRol(rol);
                 empleado.setSenority(senority);
-             
+
             }
         } catch (SQLException e) {
             throw new DAOException(e);

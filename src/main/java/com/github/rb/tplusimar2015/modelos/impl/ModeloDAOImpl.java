@@ -13,224 +13,217 @@ import com.github.rb.tplusimar2015.core.pojo.Modelo;
 import com.github.rb.tplusimar2015.exceptions.DAOException;
 import com.github.rb.tplusimar2015.modelos.ModeloDAOInterface;
 
-public class ModeloDAOImpl implements ModeloDAOInterface {
+public final class ModeloDAOImpl implements ModeloDAOInterface {
 
-	
-	private static ModeloDAOImpl INSTANCE;
+    private static ModeloDAOImpl INSTANCE;
 
-	public static ModeloDAOImpl getInstance() {
+    public static ModeloDAOImpl getInstance() {
 
-		if (INSTANCE == null)
-			createInstance();
-		return INSTANCE;
+        synchronized (ModeloDAOImpl.class) {
 
-	}
+            INSTANCE = (INSTANCE == null) ? new ModeloDAOImpl() : INSTANCE;
+        }
+        return INSTANCE;
 
-	private static void createInstance() {
-		
-            synchronized (ModeloDAOImpl.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new ModeloDAOImpl();
+    }
+
+    @Override
+    public void altaModelo(Modelo modelo) throws DAOException {
+
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
+
+        try {
+
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("INSERT INTO TB_MODELOS (NOMBRE, DESCRIPCION, MARCA) VALUES (?,?,?)");
+
+            preparedstatement.setString(1, modelo.getNombre());
+            preparedstatement.setString(2, modelo.getDescripcion());
+            preparedstatement.setInt(3, modelo.getMarca().getCodigo());
+
+            preparedstatement.executeUpdate();
+
+            conexion.commit();
+            dbManager.closeConnection(conexion);
+
+        } catch (SQLException e) {
+            try {
+                if (conexion != null) {
+                    conexion.rollback();
                 }
+                throw new DAOException(e);
+            } catch (SQLException e1) {
+                throw new DAOException(e1);
             }
-	}
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e2) {
+                throw new DAOException(e2);
+            }
+        }
 
-	@Override
-	public void altaModelo(Modelo modelo) throws DAOException {
-		
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null;
+    }
 
-		try {
+    @Override
+    public void bajaModelo(Modelo modelo) throws DAOException {
 
-			conexion = dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("INSERT INTO tb_modelos (nombre,descripcion,marca) VALUES (?,?,?)");
-			preparedstatement.setString(1, modelo.getNombre());
-			preparedstatement.setString(2, modelo.getDescripcion());
-			preparedstatement.setInt(3, modelo.getMarca().getCodigo());
-	
-			preparedstatement.executeUpdate();
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
 
-			conexion.commit();
-			dbManager.closeConnection(conexion);
+        try {
 
-		} catch (SQLException e) {
-			try {
-				conexion.rollback();
-				throw new DAOException(e);
-			} catch (SQLException e1) {
-				throw new DAOException(e1);
-			}
-		} finally {
-			try {
-				dbManager.closeConnection(conexion);
-			} catch (SQLException e2) {
-				throw new DAOException(e2);
-			}
-		}
-		
-	}
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("DELETE FROM TB_MODELOS WHERE N_MODELO = ?");
+            
+            preparedstatement.setInt(1, modelo.getN_modelo());
 
-	@Override
-	public void bajaModelo(Modelo modelo) throws DAOException {
-		
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null; 
+            preparedstatement.executeUpdate();
 
-		try {
-			
-			conexion= dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("DELETE FROM tb_modelos WHERE n_modelo=?");
-			preparedstatement.setInt(1, modelo.getN_modelo());
+            conexion.commit();
+            dbManager.closeConnection(conexion);
 
-			preparedstatement.executeUpdate();
+        } catch (SQLException e) {
+            try {
+                 if (conexion != null) {
+                conexion.rollback();
+                 }
+                throw new DAOException(e);
+            } catch (SQLException e1) {
+                throw new DAOException(e1);
+            }
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
 
-			conexion.commit();
-			dbManager.closeConnection(conexion);
+    }
 
-		} catch (SQLException e) {
-			try {
-				conexion.rollback();
-				throw new DAOException(e);
-			} catch (SQLException e1) {
-				throw new DAOException(e);
-			}
-		} finally {
-			try{
-			dbManager.closeConnection(conexion);
-			}catch(SQLException e3){
-				throw new DAOException(e3);
-			}
-		}
-		
-	}
+    @Override
+    public void modificarModelo(Modelo modelo) throws DAOException {
 
-	@Override
-	public void modificarModelo(Modelo modelo) throws DAOException {
-		
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null;
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
 
-		try {
-			
-			conexion =  dbManager.getConnection();
-			
-                        PreparedStatement preparedstatement = conexion
-					.prepareStatement("UPDATE TB_MODELOS \n"+
-                                                          "SET NOMBRE = ?, DESCRIPCION =?, MARCA=?\n"+
-                                                          "WHERE N_MODELO=?");
-                        
-			preparedstatement.setString(1, modelo.getNombre());
-			preparedstatement.setString(2, modelo.getDescripcion());
-			preparedstatement.setInt(3, modelo.getMarca().getCodigo());
-			preparedstatement.setInt(4, modelo.getN_modelo());
-			
+        try {
 
-			preparedstatement.executeUpdate();
+            conexion = dbManager.getConnection();
 
-			conexion.commit();
-			dbManager.closeConnection(conexion);
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("UPDATE TB_MODELOS SET NOMBRE = ?, DESCRIPCION = ?, MARCA = ? WHERE N_MODELO = ?");
 
-		              } catch (SQLException e) {
-                    try {
-                        if (conexion != null) {
-                            conexion.rollback();
-                            throw new DAOException(e);
-                        }
-                    } catch (SQLException e1) {
-                        throw new DAOException(e1);
-                    }
-		} finally {
-			try{
-			dbManager.closeConnection(conexion);
-			}catch(SQLException e3){
-				throw new DAOException(e3);
-			}
-		}
-		
-	}
+            preparedstatement.setString(1, modelo.getNombre());
+            preparedstatement.setString(2, modelo.getDescripcion());
+            preparedstatement.setInt(3, modelo.getMarca().getCodigo());
+            preparedstatement.setInt(4, modelo.getN_modelo());
 
-	@Override
-	public Collection<Modelo> listarModelos() throws DAOException {
-		
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null;
-		Collection<Modelo> listaModelosResultado = new ArrayList<Modelo>();
+            preparedstatement.executeUpdate();
 
-		try {
-			
-			conexion = dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("SELECT * FROM TB_MODELOS");
-			ResultSet resultSet = preparedstatement.executeQuery();
+            conexion.commit();
+            dbManager.closeConnection(conexion);
 
-			while (resultSet.next()) {
+        } catch (SQLException e) {
+            try {
+                if (conexion != null) {
+                    conexion.rollback();
+                    throw new DAOException(e);
+                }
+            } catch (SQLException e1) {
+                throw new DAOException(e1);
+            }
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
 
-				Integer n_modelo = resultSet.getInt("n_modelo");
-				String nombre = resultSet.getString("nombre");
-				String descripcion = resultSet.getString("descripcion");
-				Marca marca = Marca.getMarca((resultSet.getInt("marca")));
-				
-				Modelo modelo = new Modelo(n_modelo,nombre,descripcion,marca);
+    }
 
-				listaModelosResultado.add(modelo);
-			}
-		} catch (SQLException e) {
-			throw new DAOException(e);
-		} finally {
-			try{
-			dbManager.closeConnection(conexion);
-			}catch(SQLException e3){
-				throw new DAOException(e3);
-			}
-		}
+    @Override
+    public Collection<Modelo> listarModelos() throws DAOException {
 
-		return listaModelosResultado;
-	}
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
+        Collection<Modelo> listaModelosResultado = new ArrayList<>();
 
-	@Override
-	public Modelo buscarModelo(Modelo modelo) throws DAOException {
+        try {
 
-		DBManagerInterface dbManager = HSQLDBManager.getInstance();
-		Connection conexion = null; 
-		Modelo modeloResultado = new Modelo();
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("SELECT * FROM TB_MODELOS");
+            ResultSet resultSet = preparedstatement.executeQuery();
 
-		try {
-			
-			conexion=dbManager.getConnection();
-			PreparedStatement preparedstatement = conexion
-					.prepareStatement("SELECT * FROM TB_MODELOS WHERE N_MODELO=?");
-			preparedstatement.setInt(1, modelo.getN_modelo());
-			ResultSet resultSet = preparedstatement.executeQuery();
+            while (resultSet.next()) {
 
-			while (resultSet.next()) {
+                Integer n_modelo = resultSet.getInt("N_MODELO");
+                String nombre = resultSet.getString("NOMBRE");
+                String descripcion = resultSet.getString("DESCRIPCION");
+                Marca marca = Marca.getMarca((resultSet.getInt("MARCA")));
 
-				Integer nModelo = resultSet.getInt("n_modelo");
-				String nombre = resultSet.getString("nombre");
-				String descripcion = resultSet.getString("descripcion");
-				Marca marca = Marca.getMarca(resultSet.getInt("marca"));
-		
-				modeloResultado.setN_modelo(nModelo);
-				modeloResultado.setNombre(nombre);
-				modeloResultado.setDescripcion(descripcion);
-				modeloResultado.setMarca(marca);
-			}
-		} catch (SQLException e) {
-			throw new DAOException(e);
-		}finally {
-			try{
-			dbManager.closeConnection(conexion);
-			}catch(SQLException e3){
-				throw new DAOException(e3);
-			}
-		}
-		return modeloResultado;
-	}
-	
-	
-	
-	
+                Modelo modelo = new Modelo(n_modelo,
+                        nombre,
+                        descripcion,
+                        marca);
 
+                listaModelosResultado.add(modelo);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
+
+        return listaModelosResultado;
+    }
+
+    @Override
+    public Modelo buscarModelo(Modelo modelo) throws DAOException {
+
+        DBManagerInterface dbManager = HSQLDBManager.getInstance();
+        Connection conexion = null;
+        Modelo modeloResultado = new Modelo();
+
+        try {
+
+            conexion = dbManager.getConnection();
+            PreparedStatement preparedstatement = conexion
+                    .prepareStatement("SELECT * FROM TB_MODELOS WHERE N_MODELO = ?");
+            preparedstatement.setInt(1, modelo.getN_modelo());
+            ResultSet resultSet = preparedstatement.executeQuery();
+
+            while (resultSet.next()) {
+
+                Integer nModelo = resultSet.getInt("N_MODELO");
+                String nombre = resultSet.getString("NOMBRE");
+                String descripcion = resultSet.getString("DESCRIPCION");
+                Marca marca = Marca.getMarca(resultSet.getInt("MARCA"));
+
+                modeloResultado.setN_modelo(nModelo);
+                modeloResultado.setNombre(nombre);
+                modeloResultado.setDescripcion(descripcion);
+                modeloResultado.setMarca(marca);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        } finally {
+            try {
+                dbManager.closeConnection(conexion);
+            } catch (SQLException e3) {
+                throw new DAOException(e3);
+            }
+        }
+        return modeloResultado;
+    }
 }

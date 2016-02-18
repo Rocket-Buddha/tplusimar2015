@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.github.rb.tplusimar2015.modelos.gui.impl;
 
 import com.github.rb.tplusimar2015.core.InterfaceModuleController;
@@ -11,18 +6,15 @@ import com.github.rb.tplusimar2015.core.gui.PanelSoporteForm;
 import com.github.rb.tplusimar2015.core.pojo.Marca;
 import com.github.rb.tplusimar2015.core.pojo.Modelo;
 
-/**
- *
- * @author Andres
- */
-public class ModeloModificarSoportePanel extends PanelSoporteForm {
+public final class ModeloModificarSoportePanel extends PanelSoporteForm {
 
     public ModeloModificarSoportePanel(InterfaceModuleController controller,
             Modelo modelo) {
 
-        super(controller, new ModeloPanelBotoneraForm(),
-                new ModeloPanelFormularioForm(modelo), PanelSoporteForm.Tipo.MODIFICACION);
-
+        super(controller,
+                new ModeloPanelBotoneraForm(),
+                new ModeloPanelFormularioForm(modelo),
+                PanelSoporteForm.Tipo.MODIFICACION);
     }
 
     @Override
@@ -46,6 +38,9 @@ public class ModeloModificarSoportePanel extends PanelSoporteForm {
                 .getJcbMarca()
                 .getSelectedItem();
 
-        return new Modelo(nModelo, nombre.toUpperCase(), descripcion.toUpperCase(), marca);
+        return new Modelo(nModelo,
+                nombre.toUpperCase(),
+                descripcion.toUpperCase(),
+                marca);
     }
 }

@@ -2,42 +2,30 @@ package com.github.rb.tplusimar2015.exceptions;
 
 import com.github.rb.tplusimar2015.core.impl.MainController;
 
-public class ExceptionController {
-	
-	MainController mainController;
-	private static ExceptionController INSTANCE;
+public final class ExceptionController {
 
-	public static ExceptionController getInstance(MainController mainController) {
-		if (INSTANCE == null)
-			createInstance(mainController);
-		return INSTANCE;
-	}
+    private final MainController mainController;
+    private static ExceptionController INSTANCE;
 
-	private static void createInstance(MainController mainController) {
-		
-		if (INSTANCE == null) {
-			synchronized (ExceptionController.class) {
-				
-				if (INSTANCE == null) {
-						INSTANCE = new ExceptionController(mainController);
-					
-				}
-			}
-		}
-	}
-	
-	private ExceptionController (MainController mainController){
-		
-		this.mainController = mainController;
-		
-	}
-	
-	public void ErrorGenerico (Exception e){
-		
-		this.mainController.getPrincipalVentana().mostrarError("Error: "+e.getMessage()+". "+e.getCause().getMessage());
+    public static ExceptionController getInstance(MainController mainController) {
 
-	}
-	
-	
+        synchronized (ExceptionController.class) {
 
+            INSTANCE = (INSTANCE == null) ? new ExceptionController(mainController) : INSTANCE;
+        }
+        return INSTANCE;
+    }
+
+    private ExceptionController(MainController mainController) {
+
+        this.mainController = mainController;
+    }
+
+    public void ErrorGenerico(Exception e) {
+
+        this.mainController
+                .getPrincipalVentana()
+                .mostrarError("Error: "
+                        + e.getMessage());
+    }
 }

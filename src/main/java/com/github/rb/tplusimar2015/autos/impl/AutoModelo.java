@@ -1,170 +1,191 @@
 package com.github.rb.tplusimar2015.autos.impl;
 
 import com.github.rb.tplusimar2015.core.pojo.Auto;
+import com.github.rb.tplusimar2015.core.pojo.Vehiculo;
 import java.util.ArrayList;
-
 import javax.swing.table.AbstractTableModel;
-
-import com.github.rb.tplusimar2015.autos.impl.AutoDAOImpl;
 import com.github.rb.tplusimar2015.exceptions.DAOException;
 import com.github.rb.tplusimar2015.exceptions.ModelException;
+import javax.swing.ComboBoxModel;
+import javax.swing.event.ListDataListener;
 
+public final class AutoModelo extends AbstractTableModel implements
+        ComboBoxModel<Vehiculo> {
 
+    private ArrayList<Auto> listaAutos;
+    private final String[] columnas = {"PATENTE",
+        "NºCHASIS",
+        "NºMOTOR",
+        "DESCRIPCION",
+        "DNI-CLIENTE",
+        "MODELO"};
+    private static AutoModelo INSTANCE;
+    private Auto selectedItem;
 
-public class AutoModelo extends AbstractTableModel {
+    public static AutoModelo getInstance() throws ModelException {
 
-	private static final long serialVersionUID = -3261257139306569602L;
-	private ArrayList<Auto> listaAutos;
-	private String[] columnas = { "PATENTE", "NºCHASIS", "NºMOTOR",
-			"DESCRIPCION", "DNI-CLIENTE", "MODELO" };
-	private static AutoModelo INSTANCE;
+        synchronized (AutoModelo.class) {
 
-	public static AutoModelo getInstance() throws ModelException {
+            INSTANCE = (INSTANCE == null) ? new AutoModelo() : INSTANCE;
+        }
+        return INSTANCE;
 
-		if (INSTANCE == null)
-			createInstance();
-		return INSTANCE;
+    }
 
-	}
+    private AutoModelo() throws ModelException {
+        try {
 
-	private static void createInstance() throws ModelException {
-		// S�lo se accede a la zona sincronizada cuando la instancia no est�
-		// creada
-		if (INSTANCE == null) {
-			synchronized (AutoModelo.class) {
-				// En la zona sincronizada ser�a necesario volver a comprobar
-				// que no se ha creado la instancia.
-				if (INSTANCE == null) {
-					INSTANCE = new AutoModelo();
-				}
-			}
-		}
-	}
+            this.listaAutos = (ArrayList<Auto>) AutoDAOImpl.getInstance()
+                    .listarAutos();
+        } catch (DAOException e) {
+            throw new ModelException(e);
+        }
+    }
 
-	private AutoModelo() throws ModelException {
-		try {
+    public void altaAuto(Auto auto) throws ModelException {
 
-			this.listaAutos = (ArrayList<Auto>) AutoDAOImpl.getInstance()
-					.listarAutos();
-		} catch (DAOException e) {
-			throw new ModelException(e);
-		}
-	}
+        try {
+            this.listaAutos.add(auto);
 
-	public void altaAuto(Auto auto) throws ModelException {
+            AutoDAOImpl autoDAOImpl = AutoDAOImpl.getInstance();
+            autoDAOImpl.altaAuto(auto);
 
-		try {
-			this.listaAutos.add(auto);
+            this.fireTableDataChanged();
+        } catch (DAOException e) {
+            throw new ModelException(e);
+        }
+    }
 
-			AutoDAOImpl autoDAOImpl = AutoDAOImpl.getInstance();
-			autoDAOImpl.altaAuto(auto);
+    public void bajaAuto(Auto auto) throws ModelException {
 
-			this.fireTableDataChanged();
-		} catch (DAOException e) {
-			throw new ModelException(e);
-		}
-	}
+        try {
+            this.modeloRemover(auto);
 
-	public void bajaAuto(Auto auto) throws ModelException {
+            AutoDAOImpl autoDAOImpl = AutoDAOImpl.getInstance();
+            autoDAOImpl.bajaAuto(auto);
 
-		try {
-			this.modeloRemover(auto);
+            this.fireTableDataChanged();
+        } catch (DAOException e) {
+            throw new ModelException(e);
+        }
+    }
 
-			AutoDAOImpl autoDAOImpl = AutoDAOImpl.getInstance();
-			autoDAOImpl.bajaAuto(auto);
+    public void modificarAuto(Auto auto) throws ModelException {
+        try {
 
-			this.fireTableDataChanged();
-		} catch (DAOException e) {
-			throw new ModelException(e);
-		}
-	}
+            this.modeloModificar(auto);
 
-	public void modificarAuto(Auto auto) throws ModelException {
-		try {
+            AutoDAOImpl autoDAOImpl = AutoDAOImpl.getInstance();
+            autoDAOImpl.modificarAuto(auto);
 
-			this.modeloModificar(auto);
+            this.fireTableDataChanged();
+        } catch (DAOException e) {
+            throw new ModelException(e);
+        }
+    }
 
-			AutoDAOImpl autoDAOImpl = AutoDAOImpl.getInstance();
-			autoDAOImpl.modificarAuto(auto);
+    // metodos help
+    private void modeloRemover(Auto auto) throws ModelException {
 
-			this.fireTableDataChanged();
-		} catch (DAOException e) {
-			throw new ModelException(e);
-		}
-	}
+        Auto autoI = new Auto();
 
-	// metodos help
+        for (int i = 0; i < this.listaAutos.size(); i++) {
 
-	private void modeloRemover(Auto auto) throws ModelException {
+            autoI = this.listaAutos.get(i);
 
-		Auto autoI = new Auto();
+            if (autoI.getPatente().equals(auto.getPatente())) {
+                this.listaAutos.remove(i);
+                i = -1;
+            }
+        }
+    }
 
-		for (int i = 0; i < this.listaAutos.size(); i++) {
+    private void modeloModificar(Auto auto) throws ModelException {
 
-			autoI = this.listaAutos.get(i);
+        Auto autoI = new Auto();
 
-			if (autoI.getPatente().equals(auto.getPatente())) {
-				this.listaAutos.remove(i);
-				i = -1;
-			}
-		}
-	}
+        for (int i = 0; i < this.listaAutos.size(); i++) {
 
-	private void modeloModificar(Auto auto) throws ModelException {
+            autoI = this.listaAutos.get(i);
 
-		Auto autoI = new Auto();
+            if (autoI.getPatente().equals(auto.getPatente())) {
+                this.listaAutos.set(i, auto);
+            }
+        }
+    }
 
-		for (int i = 0; i < this.listaAutos.size(); i++) {
+    @Override
+    public int getColumnCount() {
+        return columnas.length;
+    }
 
-			autoI = this.listaAutos.get(i);
+    @Override
+    public int getRowCount() {
+        return listaAutos.size();
+    }
 
-			if (autoI.getPatente().equals(auto.getPatente())) {
-				this.listaAutos.set(i, auto);
-			}
-		}
-	}
+    @Override
+    public String getColumnName(int arg0) {
+        return columnas[arg0];
+    }
 
-	@Override
-	public int getColumnCount() {
-		return columnas.length;
-	}
+    @Override
+    public Object getValueAt(int arg0, int arg1) {
 
-	@Override
-	public int getRowCount() {
-		return listaAutos.size();
-	}
+        String stringPosicion = null;
+        Auto auto = this.listaAutos.get(arg0);
 
-	@Override
-	public String getColumnName(int arg0) {
-		return columnas[arg0];
-	}
+        switch (arg1) {
+            case 0:
+                stringPosicion = auto.getPatente();
+                break;
+            case 1:
+                stringPosicion = auto.getNumeroDeChasis();
+                break;
+            case 2:
+                stringPosicion = auto.getNumeroDeMotor();
+                break;
+            case 3:
+                stringPosicion = auto.getDescripcionParticular();
+                break;
+            case 4:
+                stringPosicion = String.valueOf(auto.getCliente().getDni());
+                break;
+            case 5:
+                stringPosicion = auto.getModelo().toString();
+                break;
+        }
+        return stringPosicion;
+    }
 
-	@Override
-	public Object getValueAt(int arg0, int arg1) {
+    @Override
+    public void setSelectedItem(Object anItem) {
+        this.selectedItem = (Auto) anItem;
+    }
 
-		String stringPosicion = null;
-		Auto auto = this.listaAutos.get(arg0);
+    @Override
+    public Object getSelectedItem() {
+        return this.selectedItem;
+    }
 
-		switch (arg1) {
-		case 0:
-			stringPosicion = auto.getPatente();
-			break;
-		case 1:
-			stringPosicion = auto.getNumeroDeChasis();
-			break;
-		case 2:
-			stringPosicion = auto.getNumeroDeMotor();
-			break;
-		case 3:
-			stringPosicion = auto.getDescripcionParticular();
-			break;
-		case 4:
-			stringPosicion = String.valueOf(auto.getCliente().getDni());
-			break;
-		case 5:
-			stringPosicion = auto.getModelo().toString();
-			break;
-		}
-		return stringPosicion;
-	}
+    @Override
+    public int getSize() {
+        return listaAutos.size();
+    }
+
+    @Override
+    public Vehiculo getElementAt(int index) {
+        return this.listaAutos.get(index);
+    }
+
+    @Override
+    public void addListDataListener(ListDataListener l) {
+
+    }
+
+    @Override
+    public void removeListDataListener(ListDataListener l) {
+
+    }
+
 }

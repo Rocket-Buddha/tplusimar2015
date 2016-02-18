@@ -4,44 +4,33 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-
 public abstract class PanelBotoneraForm extends JPanel {
 
-	private static final long serialVersionUID = -9122943147257570742L;
+    private final JButton jbAceptar;
+    private final JButton jbCancelar;
 
-	private JButton jbAceptar;
-	private JButton jbCancelar;
+    public PanelBotoneraForm() {
 
-	public PanelBotoneraForm() {
+        this.jbAceptar = new JButton("Aceptar");
+        this.jbCancelar = new JButton("Cancelar");
 
-		this.jbAceptar = new JButton("Aceptar");
-		this.jbCancelar = new JButton("Cancelar");
+        this.armarPanel();
 
-		this.armarPanel();
+    }
 
-	}
+    private void armarPanel() {
 
-	private void armarPanel() {
+        this.setLayout(new FlowLayout());
+        this.add(jbAceptar);
+        this.add(jbCancelar);
+    }
 
-		this.setLayout(new FlowLayout());
-		this.add(jbAceptar);
-		this.add(jbCancelar);
-	}
+    public final JButton getJbAceptar() {
+        return jbAceptar;
+    }
 
-	public JButton getJbAceptar() {
-		return jbAceptar;
-	}
-
-	public void setJbAceptar(JButton jbAceptar) {
-		this.jbAceptar = jbAceptar;
-	}
-
-	public JButton getJbCancelar() {
-		return jbCancelar;
-	}
-
-	public void setJbCancelar(JButton jbCancelar) {
-		this.jbCancelar = jbCancelar;
-	}
+    public final JButton getJbCancelar() {
+        return jbCancelar;
+    }
 
 }

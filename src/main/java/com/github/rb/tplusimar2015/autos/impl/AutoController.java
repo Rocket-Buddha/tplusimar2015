@@ -14,24 +14,17 @@ import com.github.rb.tplusimar2015.clientes.impl.ClienteModelo;
 import com.github.rb.tplusimar2015.core.impl.MainController;
 import com.github.rb.tplusimar2015.modelos.impl.ModeloModelo;
 
-public class AutoController implements InterfaceModuleController {
+public final class AutoController implements InterfaceModuleController {
 
-    MainController mainController;
+    private final MainController mainController;
     private static AutoController INSTANCE;
 
     public static AutoController getInstance(MainController mainController) {
-        if (INSTANCE == null) {
-            createInstance(mainController);
+        synchronized ( AutoController.class) {
+
+            INSTANCE = (INSTANCE == null) ? new  AutoController(mainController) : INSTANCE;
         }
         return INSTANCE;
-    }
-
-    private static void createInstance(MainController mainController) {
-        synchronized (AutoController.class) {
-            if (INSTANCE == null) {
-                INSTANCE = new AutoController(mainController);
-            }
-        }
     }
 
     private AutoController(MainController mainController) {
@@ -71,7 +64,6 @@ public class AutoController implements InterfaceModuleController {
 
     @Override
     public void mostrarPanelModificar(Object auto) {
-
         try {
 
             PanelSoporteForm panelSoporteForm = new AutoModificarSoportePanel(
@@ -99,7 +91,7 @@ public class AutoController implements InterfaceModuleController {
                 this.mostrarPanelListar();
             }
             if (respuesta == JOptionPane.NO_OPTION) {
-                return;
+                
             } else {
                 this.mostrarPanelListar();
             }
@@ -120,10 +112,8 @@ public class AutoController implements InterfaceModuleController {
             if (respuesta == JOptionPane.OK_OPTION) {
 
                 AutoModelo.getInstance().bajaAuto((Auto) auto);
-            } else {
-                return;
             }
-
+            
         } catch (ModelException | RuntimeException e) {
             this.mainController.getExceptionController().ErrorGenerico(e);
         }
@@ -142,7 +132,7 @@ public class AutoController implements InterfaceModuleController {
                 this.mostrarPanelListar();
 
                 if (respuesta == JOptionPane.NO_OPTION) {
-                    return;
+                    
                 } else {
                     this.mostrarPanelListar();
                 }
@@ -152,10 +142,6 @@ public class AutoController implements InterfaceModuleController {
         }
     }
 
-    /**
-     *
-     * @return
-     */
     @Override
     public MainController getMainController() {
 

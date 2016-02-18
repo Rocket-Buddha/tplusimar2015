@@ -12,142 +12,161 @@ import com.github.rb.tplusimar2015.core.gui.impl.PrincipalVentana;
 import com.github.rb.tplusimar2015.core.InterfaceModuleController;
 import com.github.rb.tplusimar2015.core.impl.MainController;
 
-public class ClienteController implements  InterfaceModuleController{
+public final class ClienteController implements InterfaceModuleController {
 
-	private final MainController mainController;
-	private static ClienteController INSTANCE;
+    private final MainController mainController;
+    private static ClienteController INSTANCE;
 
     public static ClienteController getInstance(MainController mainController) {
 
         synchronized (ClienteController.class) {
-            if (INSTANCE == null) {
-                
-                INSTANCE = new ClienteController(mainController);
-            }
-            return INSTANCE;
+
+            INSTANCE = (INSTANCE == null) ? new ClienteController(mainController) : INSTANCE;
         }
+        return INSTANCE;
     }
 
     private ClienteController(MainController mainController) {
         this.mainController = mainController;
     }
 
-	
-	@Override
-	public void mostrarPanelListar() {
-		try {
+    @Override
+    public void mostrarPanelListar() {
+        try {
 
-			ClienteListarSoportePanel panelListado = new ClienteListarSoportePanel(this, ClienteModelo.getInstance());
+            ClienteListarSoportePanel panelListado = new ClienteListarSoportePanel(this,
+                    ClienteModelo.getInstance());
 
-			ClienteModelo.getInstance().addTableModelListener(panelListado.getTabla());
+            ClienteModelo.getInstance()
+                    .addTableModelListener(panelListado.getTabla());
 
-			this.mainController.render(panelListado);
+            this.mainController
+                    .render(panelListado);
 
-		} catch (ModelException | RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
-		
-	}
+        } catch (ModelException | RuntimeException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
 
-	@Override
-	public void mostrarPanelAlta() {
-		try {
+    }
 
-			PanelSoporteForm panelSoporteForm = new ClienteAltaSoportePanel(this);
-			
-			this.mainController.render(panelSoporteForm);
+    @Override
+    public void mostrarPanelAlta() {
+        try {
 
-		} catch (GUIException | RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
-	
-	}
+            PanelSoporteForm panelSoporteForm = new ClienteAltaSoportePanel(this);
 
-	@Override
-	public void mostrarPanelModificar(Object cliente) {
-		try {
+            this.mainController
+                    .render(panelSoporteForm);
 
-			PanelSoporteForm panelSoporteForm = new ClienteModificarSoportePanel(this, (Cliente) cliente);
+        } catch (GUIException | RuntimeException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
 
-			this.mainController.render(panelSoporteForm);
+    }
 
-		} catch (GUIException | RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
-		
-	}
+    @Override
+    public void mostrarPanelModificar(Object cliente) {
+        try {
 
-	@Override
-	public void alta(Object cliente) {
-		try {
+            PanelSoporteForm panelSoporteForm = new ClienteModificarSoportePanel(this,
+                    (Cliente) cliente);
 
-			Integer respuesta = JOptionPane.showConfirmDialog(
-					PrincipalVentana.getInstance(this.mainController),
-					"¿Esta seguro que desea dar de alta el Cliente?");
+            this.mainController
+                    .render(panelSoporteForm);
 
-			if (respuesta == JOptionPane.OK_OPTION) {
+        } catch (GUIException | RuntimeException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
 
-				ClienteModelo.getInstance().altaCliente((Cliente) cliente);
-				this.mostrarPanelListar();
-			}
-			if (respuesta == JOptionPane.NO_OPTION) {} else { //REFACTOREAR ESTO
-				this.mostrarPanelListar();
-			}
+    }
 
-		} catch (ModelException | RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
-		
-	}
+    @Override
+    public void alta(Object cliente) {
+        try {
 
-	@Override
-	public void baja(Object cliente) {
-		
-		try {
+            Integer respuesta = JOptionPane.showConfirmDialog(
+                    PrincipalVentana.getInstance(this.mainController),
+                    "¿Esta seguro que desea dar de alta el Cliente?");
 
-			Integer respuesta = JOptionPane.showConfirmDialog(
-					PrincipalVentana.getInstance(this.mainController), "�Esta seguro que desea eliminar el Cliente?");
+            if (respuesta == JOptionPane.OK_OPTION) {
 
-			if (respuesta == JOptionPane.OK_OPTION) {
+                ClienteModelo.getInstance()
+                        .altaCliente((Cliente) cliente);
+                this.mostrarPanelListar();
+            }
+            if (respuesta == JOptionPane.NO_OPTION) {
+            } else {
+                this.mostrarPanelListar();
+            }
 
-				ClienteModelo.getInstance().bajaCliente((Cliente) cliente);
-			} else {
-			}
+        } catch (ModelException | RuntimeException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
 
-		} catch (ModelException | RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
-		
-	}
+    }
 
-	@Override
-	public void modificar(Object cliente) {
-		try {
-			Integer respuesta = JOptionPane.showConfirmDialog(
-					PrincipalVentana.getInstance(this.mainController),
-					"¿Esta seguro que desea modificar el Cliente?");
+    @Override
+    public void baja(Object cliente) {
 
-			if (respuesta == JOptionPane.OK_OPTION) {
+        try {
 
-				ClienteModelo.getInstance().modificarCliente((Cliente) cliente);
-				this.mostrarPanelListar();
+            Integer respuesta = JOptionPane.showConfirmDialog(
+                    PrincipalVentana.getInstance(this.mainController),
+                    "¿Esta seguro que desea eliminar el Cliente?");
 
-				if (respuesta == JOptionPane.NO_OPTION) {
-				} else {
-					this.mostrarPanelListar();
-				}
-			}
-		} catch (ModelException | RuntimeException e) {
-			this.mainController.getExceptionController().ErrorGenerico(e);
-		}
-		
-	}
+            if (respuesta == JOptionPane.OK_OPTION) {
 
-        @Override
-	public MainController getMainController(){
-		
-		return this.mainController;
-		
-	}
+                ClienteModelo.getInstance()
+                        .bajaCliente((Cliente) cliente);
+            } else {
+            }
+
+        } catch (ModelException | RuntimeException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
+
+    }
+
+    @Override
+    public void modificar(Object cliente) {
+        try {
+            Integer respuesta = JOptionPane.showConfirmDialog(
+                    PrincipalVentana.getInstance(this.mainController),
+                    "¿Esta seguro que desea modificar el Cliente?");
+
+            if (respuesta == JOptionPane.OK_OPTION) {
+
+                ClienteModelo.getInstance()
+                        .modificarCliente((Cliente) cliente);
+                this.mostrarPanelListar();
+
+                if (respuesta == JOptionPane.NO_OPTION) {
+                } else {
+                    this.mostrarPanelListar();
+                }
+            }
+        } catch (ModelException | RuntimeException e) {
+            this.mainController
+                    .getExceptionController()
+                    .ErrorGenerico(e);
+        }
+
+    }
+
+    @Override
+    public MainController getMainController() {
+
+        return this.mainController;
+
+    }
 }
-

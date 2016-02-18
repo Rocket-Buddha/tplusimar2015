@@ -8,40 +8,30 @@ import javax.swing.table.AbstractTableModel;
 
 public abstract class PanelFormularioList extends JPanel {
 
-	
-	private TablaListener tabla;
-	private JScrollPane scrollPanel;
+    private final TablaListener tabla;
+    private final JScrollPane scrollPanel;
 
-	protected PanelFormularioList(AbstractTableModel modelo){
+    protected PanelFormularioList(AbstractTableModel modelo) {
 
-			this.tabla = TablaListener.getInstance();
-			this.tabla.setModel(modelo); // Setea modelo de la tabla
-			this.scrollPanel = new JScrollPane(tabla);
+        this.tabla = TablaListener.getInstance();
+        this.tabla.setModel(modelo);
+        this.scrollPanel = new JScrollPane(tabla);
 
-			this.armarPanel();
-	
-	}
+        this.armarPanel();
 
-	private void armarPanel() {
+    }
 
-		this.setLayout(new BorderLayout());
-		this.add(this.scrollPanel, BorderLayout.CENTER);
-	}
+    private void armarPanel() {
 
-	public TablaListener getTabla() {
-		return tabla;
-	}
+        this.setLayout(new BorderLayout());
+        this.add(this.scrollPanel, BorderLayout.CENTER);
+    }
 
-	public void setTabla(TablaListener tabla) {
-		this.tabla = tabla;
-	}
+    public TablaListener getTabla() {
+        return tabla;
+    }
 
-	public JScrollPane getScrollPanelAutos() {
-		return scrollPanel;
-	}
-
-	public void setScrollPanelAutos(JScrollPane scrollPanelAutos) {
-		this.scrollPanel = scrollPanelAutos;
-	}
-
+    public JScrollPane getScrollPanelAutos() {
+        return scrollPanel;
+    }
 }

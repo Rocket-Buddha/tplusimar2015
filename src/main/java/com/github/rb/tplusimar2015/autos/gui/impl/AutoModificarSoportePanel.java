@@ -11,19 +11,19 @@ import com.github.rb.tplusimar2015.core.gui.PanelSoporteForm;
 
 public final class AutoModificarSoportePanel extends PanelSoporteForm {
 
-    public AutoModificarSoportePanel(InterfaceModuleController manejadorEventos,
-            Auto auto, ComboBoxModel<Cliente> modeloClientes, 
-            ComboBoxModel<Modelo> modeloModelos) 
+    public AutoModificarSoportePanel(InterfaceModuleController controller,
+            Auto auto, ComboBoxModel<Cliente> modeloClientes,
+            ComboBoxModel<Modelo> modeloModelos)
             throws GUIException {
 
-        super(manejadorEventos,
+        super(controller,
                 new AutoPanelBotoneraForm(),
                 new AutoPanelFormularioForm(auto,
                         modeloClientes,
-                        modeloModelos),PanelSoporteForm.Tipo.MODIFICACION);
+                        modeloModelos),
+                PanelSoporteForm.Tipo.MODIFICACION);
 
     }
-
 
     @Override
     protected Auto prepararDatos() {

@@ -6,7 +6,7 @@ import com.github.rb.tplusimar2015.core.pojo.Modelo;
 import com.github.rb.tplusimar2015.core.gui.PanelSoporteList;
 import javax.swing.table.AbstractTableModel;
 
-public class ModeloListarSoportePanel extends PanelSoporteList {
+public final class ModeloListarSoportePanel extends PanelSoporteList {
 
     public ModeloListarSoportePanel(InterfaceModuleController controller,
             AbstractTableModel modelo) {
@@ -14,12 +14,8 @@ public class ModeloListarSoportePanel extends PanelSoporteList {
         super(controller,
                 new ModeloPanelBotoneraList(),
                 new ModeloPanelFormularioList(modelo));
-        
-        
-       
-        //super.getTabla().borrarColumna("NºMODELO", 0);
     }
-    
+
     @Override
     protected Modelo prepararDatos() {
 
@@ -27,27 +23,31 @@ public class ModeloListarSoportePanel extends PanelSoporteList {
                 .getTabla()
                 .getSelectedRow();
 
-        Integer nModelo = Integer.valueOf((String)super.getPanelCentral()
+        Integer nModelo = Integer.valueOf((String) super.getPanelCentral()
                 .getTabla()
                 .getModel()
                 .getValueAt(indice, 0));
 
-        String nombre = (String)super.getPanelCentral()
+        String nombre = (String) super.getPanelCentral()
                 .getTabla()
                 .getModel()
                 .getValueAt(indice, 1);
-                
+
         String descripcion = (String) super.getPanelCentral()
                 .getTabla()
                 .getModel()
                 .getValueAt(indice, 2);
-        
+
         Marca marca = Marca.getMarca(super.getPanelCentral()
                 .getTabla()
                 .getModel()
-                .getValueAt(indice, 3).toString());
+                .getValueAt(indice, 3)
+                .toString());
 
-        Modelo modelo = new Modelo(nModelo,nombre, descripcion, marca);
+        Modelo modelo = new Modelo(nModelo,
+                nombre,
+                descripcion,
+                marca);
 
         return modelo;
     }

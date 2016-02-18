@@ -8,15 +8,15 @@ import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;
 import javax.swing.table.AbstractTableModel;
 
-public class EmpleadoModelo extends AbstractTableModel implements
+public final class EmpleadoModelo extends AbstractTableModel implements
         ComboBoxModel<Empleado> {
 
     private ArrayList<Empleado> listaEmpleados;
-    private String[] columnas = {"LEGAJO", "DNI", "NOMBRE", "APELLIDO", "TELEFONO", "DIRECCION", "ROL", "SENORITY"};
+    private final String[] columnas;
     private Empleado selectedItem;
     private static EmpleadoModelo INSTANCE;
 
-    public static EmpleadoModelo getInstance() {
+    public static EmpleadoModelo getInstance() throws ModelException {
         synchronized (EmpleadoModelo.class) {
 
             INSTANCE = (INSTANCE == null) ? new EmpleadoModelo() : INSTANCE;
@@ -24,13 +24,23 @@ public class EmpleadoModelo extends AbstractTableModel implements
         return INSTANCE;
     }
 
-    private EmpleadoModelo() {
+    private EmpleadoModelo() throws ModelException {
+
+        this.columnas = new String[]{"LEGAJO",
+            "DNI",
+            "NOMBRE",
+            "APELLIDO",
+            "TELEFONO",
+            "DIRECCION",
+            "ROL",
+            "SENORITY"};
 
         try {
             this.listaEmpleados = (ArrayList<Empleado>) EmpleadoDAOImpl
-                    .getInstance().listarEmpleados();
+                    .getInstance()
+                    .listarEmpleados();
         } catch (DAOException e) {
-            //throw new ModelException(e);
+            throw new ModelException(e);
         }
     }
 
@@ -38,6 +48,11 @@ public class EmpleadoModelo extends AbstractTableModel implements
 
         EmpleadoDAOImpl empleadoDAOImpl = EmpleadoDAOImpl.getInstance();
         empleadoDAOImpl.altaEmpleado(empleado);
+        
+        this.listaEmpleados = (ArrayList<Empleado>) EmpleadoDAOImpl
+                    .getInstance()
+                    .listarEmpleados();
+        
         this.fireTableDataChanged();
     }
 
@@ -62,22 +77,22 @@ public class EmpleadoModelo extends AbstractTableModel implements
 
             EmpleadoDAOImpl empleadoDAOImpl = EmpleadoDAOImpl.getInstance();
             empleadoDAOImpl.modificarEmpleado(empleado);
-
+            this.modeloModificar(empleado);
             this.fireTableDataChanged();
-            
+
         } catch (DAOException e) {
             throw new ModelException(e);
         }
     }
 
-    // metodos help
     private void modeloRemover(Empleado empleado) throws ModelException {
 
-        Empleado empleadoI = new Empleado();
+        Empleado empleadoI;
 
         for (int i = 0; i < this.listaEmpleados.size(); i++) {
 
-            empleadoI = this.listaEmpleados.get(i);
+            empleadoI = this.listaEmpleados
+                    .get(i);
 
             if (empleadoI.getLegajo().equals(empleado.getLegajo())) {
                 this.listaEmpleados.remove(i);
@@ -88,11 +103,12 @@ public class EmpleadoModelo extends AbstractTableModel implements
 
     private void modeloModificar(Empleado empleado) throws ModelException {
 
-        Empleado empleadoI = new Empleado();
+        Empleado empleadoI;
 
         for (int i = 0; i < this.listaEmpleados.size(); i++) {
 
-            empleadoI = this.listaEmpleados.get(i);
+            empleadoI = this.listaEmpleados
+                    .get(i);
 
             if (empleadoI.getDni().equals(empleado.getDni())) {
                 this.listaEmpleados.set(i, empleado);
@@ -120,7 +136,7 @@ public class EmpleadoModelo extends AbstractTableModel implements
 
         String stringPosicion = null;
         Empleado empleado = this.listaEmpleados.get(arg0);
-//{"LEGAJO", "DNI", "NOMBRE", "APELLIDO", "TELEFONO", "DIRECCION", "ROL", "SENORITY"};
+
         switch (arg1) {
             case 0:
                 stringPosicion = String.valueOf(empleado.getLegajo());
@@ -150,7 +166,6 @@ public class EmpleadoModelo extends AbstractTableModel implements
         return stringPosicion;
     }
 
-    // ///////////////////////
     @Override
     public void addListDataListener(ListDataListener l) {
 
@@ -158,12 +173,14 @@ public class EmpleadoModelo extends AbstractTableModel implements
 
     @Override
     public Empleado getElementAt(int index) {
-        return this.listaEmpleados.get(index);
+        return this.listaEmpleados
+                .get(index);
     }
 
     @Override
     public int getSize() {
-        return this.listaEmpleados.size();
+        return this.listaEmpleados
+                .size();
     }
 
     @Override
@@ -182,5 +199,4 @@ public class EmpleadoModelo extends AbstractTableModel implements
         this.selectedItem = (Empleado) arg0;
 
     }
-
 }

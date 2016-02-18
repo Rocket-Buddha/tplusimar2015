@@ -6,19 +6,14 @@ import javax.swing.JTextField;
 import com.github.rb.tplusimar2015.core.pojo.Cliente;
 import com.github.rb.tplusimar2015.core.gui.PanelFormularioForm;
 
-public class ClientePanelFormularioForm extends PanelFormularioForm {
+public final class ClientePanelFormularioForm extends PanelFormularioForm {
 
-    /**
-     *
-     */
-    private JTextField jtfDni;
-    private JTextField jtfNombre;
-    private JTextField jtfApellido;
-    private JTextField jtfTelefono;
+    private final JTextField jtfDni;
+    private final JTextField jtfNombre;
+    private final JTextField jtfApellido;
+    private final JTextField jtfTelefono;
 
     public ClientePanelFormularioForm() {
-
-        super();
 
         this.jtfDni = new JTextField(10);
         this.jtfNombre = new JTextField(10);
@@ -26,12 +21,10 @@ public class ClientePanelFormularioForm extends PanelFormularioForm {
         this.jtfTelefono = new JTextField(10);
 
         this.armarPanel();
-
     }
 
     public ClientePanelFormularioForm(Cliente cliente) {
 
-        super();
         this.jtfDni = new JTextField();
         this.jtfDni.setEnabled(false);
         this.jtfNombre = new JTextField();
@@ -53,7 +46,6 @@ public class ClientePanelFormularioForm extends PanelFormularioForm {
 
     private void armarPanel() {
 
-        //Cantidad de filas, cantidad de columnas, gap horizontal, gap vertical
         super.getContenedor().setLayout(new GridLayout(4, 2, 5, 5));
 
         super.getContenedor().add(new JLabel("DNI:"));
@@ -73,32 +65,15 @@ public class ClientePanelFormularioForm extends PanelFormularioForm {
         return jtfDni;
     }
 
-    public void setJtfDni(JTextField jtfDni) {
-        this.jtfDni = jtfDni;
-    }
-
     public JTextField getJtfNombre() {
         return jtfNombre;
-    }
-
-    public void setJtfNombre(JTextField jtfNombre) {
-        this.jtfNombre = jtfNombre;
     }
 
     public JTextField getJtfApellido() {
         return jtfApellido;
     }
 
-    public void setJtfApellido(JTextField jtfApellido) {
-        this.jtfApellido = jtfApellido;
-    }
-
     public JTextField getJtfTelefono() {
         return jtfTelefono;
     }
-
-    public void setJtfTelefono(JTextField jtfTelefono) {
-        this.jtfTelefono = jtfTelefono;
-    }
-
 }
